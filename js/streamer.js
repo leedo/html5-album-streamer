@@ -54,7 +54,7 @@ var Streamer = Class.create({
     if (this.activeSong) {
       this.element.down(".active").removeClassName("active");
       this.pause();
-      this.activeSong.currentTime = 0;
+      if (this.activeSong.currentTime) this.activeSong.currentTime = 0;
     }
     clearInterval(this.progressTimer);
   },
@@ -76,7 +76,7 @@ var Streamer = Class.create({
         this.initPlayer();
       }.bind(this),
       onFailure: function (response) {
-        console.log("error");
+        //console.log("error");
       }
     })
   },
@@ -88,7 +88,7 @@ var Streamer = Class.create({
     for (var i=0; i < urls.length; i++) {
       var url = urls[i].match(/<location>(.*?)<\/location>/);
       var title = titles[i].match(/<title>(.*?)<\/title>/);
-      ret.push({url: url[1], title: title[1]});
+      ret.push({url: url[1], title: (i+1)+". "+title[1]});
     }
     return ret;
   },
