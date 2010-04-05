@@ -1,0 +1,98 @@
+<html>
+  <head>
+    <script type="text/javascript" src="/js/prototype.js"></script>
+    <script type="text/javascript" src="/js/streamer.js"></script>
+    <style>
+      .streamer {
+        width: 350px;
+        background: #fff;
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 8px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .streamer ol {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        max-height: 140px;
+        overflow-y: auto;
+        border: 3px solid #ddd;
+        list-style-type: decimal; 
+        list-style-position: inside;
+      }
+      .streamer ol li {
+        border-bottom: 1px solid #ddd;
+        color: #999;
+      }
+      .streamer ol a {
+        overflow: hidden;
+        padding: 3px;
+        text-decoration: none;
+        display: block;
+        background: #efefef;
+        color: #888;
+        white-space: nowrap;
+        text-shadow: -1px -1px 0 rgba(255, 255, 255, 0.75);
+      }
+      .streamer a:hover {
+        color: #666;
+      }
+      .streamer a.active {
+        background: #fff;
+      }
+      .streamer a:last-child {
+        border-bottom: none;
+      }
+      .streamer .bar {
+        height: 12px;
+        background: #efefef;
+        border: 3px solid #ddd;
+        margin-bottom: 2px;
+        position: relative;
+      }
+      .streamer span {
+        display: block;
+        height: 12px;
+        color: #999;
+        font-size: 11px;
+        display: block;
+        float: left;
+        padding: 0 2px;
+        cursor: pointer;
+      }
+      .streamer span:hover {
+        color: #666;
+      }
+      .streamer .progress {
+        position: absolute;
+        left: 0px;
+        height: 12px;
+        width: 0px;
+        background: #ddd;
+        z-index: 10;
+      }
+      .streamer .title {
+        position: absolute;
+        left: 25px;
+        width: 300px;
+        height: 12px;
+        top: 3px;
+        overflow: hidden;
+        color: #888;
+        z-index: 21;
+        text-shadow: 1px 0 0 rgba(255, 255, 255, 0.5);
+      }
+      .streamer .controls {
+        position: absolute;
+        left: 0px;
+        height: 12px;
+        width: 100%;
+        z-index: 20;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="streamer" rel="#playlist-url"></div>
+  </body>
+</html>
