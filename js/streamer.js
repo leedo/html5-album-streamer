@@ -5,8 +5,8 @@ var Streamer = Class.create({
     this.songs = [];
     this.activeSong;
     this.progressTimer;
-    this.pauseText = "❚❚";
-    this.playText = "►";
+    this.pauseText = "&#10074;&#10074;";
+    this.playText = "&#9658;";
     this.songTemplate = new Template("<li><a class=\"streamersong\" href=\"#{url}\">#{title}</a></li>");
     this.refreshPlaylist();
     document.observe("click", function (event) {
@@ -93,7 +93,7 @@ var Streamer = Class.create({
     return ret;
   },
   initPlayer: function () {
-    this.element.insert({top: "<div class=\"bar\"><div class=\"progress\"></div><div class=\"controls\"><span class=\"play\">►</span></div><div class=\"title\"></div></div>"});
+    this.element.insert({top: "<div class=\"bar\"><div class=\"progress\"></div><div class=\"controls\"><span class=\"play\">&#9658;</span></div><div class=\"title\"></div></div>"});
     this.element.insert("<ol></ol>");
     var list = this.element.down("ol");
     this.songs.each(function (song) {
