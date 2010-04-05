@@ -7,7 +7,7 @@ var Streamer = Class.create({
     this.progressTimer;
     this.pauseText = "&#10074;&#10074;";
     this.playText = "&#9658;";
-    this.songTemplate = new Template("<li><a class=\"streamersong\" href=\"#{url}\">#{title}</a></li>");
+    this.songTemplate = new Template("<li class=\"streamersong\"><a href=\"#{url}\">#{title}</a></li>");
     this.refreshPlaylist();
     document.observe("click", function (event) {
       var song = event.findElement(".streamersong");
@@ -28,14 +28,27 @@ var Streamer = Class.create({
         this.stop();
         return;
       }
+      var next = event.findElement(".next");
+      if (next && next.descendantOf(this.element)) {
+        event.stop();
+        this.next();
+        return;
+      }
+      var prev = event.findElement(".previous");
+      if (prev && prev.descendantOf(this.element)) {
+        event.stop();
+        this.previous();
+        return;
+      }
     }.bind(this));
   },
   changeSong: function (elem) {
     this.stop();
     elem.addClassName("active");
     this.updateProgress();
-    this.activeSong = new Audio(elem.href);
-    this.element.down(".title").innerHTML = elem.innerHTML;
+    this.activeSong = new Audio(elem.down("a").href);
+    this.activeSong.observe("ended", this.next.bind(this));
+    this.element.down(".title").innerHTML = elem.down("a").innerHTML;
     this.play();
   },
   togglePlay: function (elem) {
@@ -44,9 +57,22 @@ var Streamer = Class.create({
     else
       this.pause();
   },
+  next: function () {
+    var active = this.element.down(".active");
+    if (!active)
+      this.play();
+    else {
+      this.changeSong(active.next());
+    }
+  },
+  previous: function () {
+    var active = this.element.down(".active");
+    if (active && active.previous())
+      this.changeSong(active.previous());
+  },
   play: function () {
     if (!this.activeSong)
-      this.changeSong(this.element.down("a.streamersong"));
+      this.changeSong(this.element.down(".streamersong"));
     this.activeSong.play();
     this.element.down(".play").innerHTML = this.pauseText;
     this.progressTimer = setInterval(this.updateProgress.bind(this), 500);
@@ -62,6 +88,7 @@ var Streamer = Class.create({
       this.element.down(".title").innerHTML = "";
       this.pause();
       if (this.activeSong.currentTime) this.activeSong.currentTime = 0;
+      this.activeSong = undefined;
     }
     clearInterval(this.progressTimer);
   },
@@ -100,7 +127,7 @@ var Streamer = Class.create({
     return ret;
   },
   initPlayer: function () {
-    this.element.insert({top: "<div class=\"bar\"><div class=\"progress\"></div><div class=\"controls\"><span class=\"stop\">&#9632;</span><span class=\"play\">&#9658;</span></div><div class=\"title\"></div></div>"});
+    this.element.insert({top: "<div class=\"bar\"><div class=\"progress\"></div><div class=\"controls\"><span class=\"previous\">|&lt;</span><span class=\"stop\">&#9632;</span><span class=\"play\">&#9658;</span><span class=\"next\">&gt;|</span></div><div class=\"title\"></div></div>"});
     this.element.insert("<ol></ol>");
     var list = this.element.down("ol");
     this.songs.each(function (song) {
