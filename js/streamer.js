@@ -22,6 +22,12 @@ var Streamer = Class.create({
         this.togglePlay(play);
         return;
       }
+      var stop = event.findElement(".stop");
+      if (stop && stop.descendantOf(this.element)) {
+        event.stop();
+        this.stop();
+        return;
+      }
     }.bind(this));
   },
   changeSong: function (elem) {
@@ -53,6 +59,7 @@ var Streamer = Class.create({
   stop: function () {
     if (this.activeSong) {
       this.element.down(".active").removeClassName("active");
+      this.element.down(".title").innerHTML = "";
       this.pause();
       if (this.activeSong.currentTime) this.activeSong.currentTime = 0;
     }
@@ -93,7 +100,7 @@ var Streamer = Class.create({
     return ret;
   },
   initPlayer: function () {
-    this.element.insert({top: "<div class=\"bar\"><div class=\"progress\"></div><div class=\"controls\"><span class=\"play\">&#9658;</span></div><div class=\"title\"></div></div>"});
+    this.element.insert({top: "<div class=\"bar\"><div class=\"progress\"></div><div class=\"controls\"><span class=\"stop\">&#9632;</span><span class=\"play\">&#9658;</span></div><div class=\"title\"></div></div>"});
     this.element.insert("<ol></ol>");
     var list = this.element.down("ol");
     this.songs.each(function (song) {
