@@ -2,41 +2,35 @@ var Streamer = Class.create({
   initialize: function (element) {
     this.playlist_url = element.getAttribute("rel");
     this.element = element;
+    try { new Audio(); }
+    catch (err) {
+      this.displayError("<p class=\"error\">The &lt;audio&gt; element is not supported by your browser</p>");
+      return;
+    };
     this.songs = [];
     this.activeSong;
     this.progressTimer;
     this.songTemplate = new Template("<li class=\"streamersong\"><a href=\"#{url}\">#{title}</a></li>");
     this.refreshPlaylist();
+    this.clickHandlers = [
+      { select: ".streamersong",
+        action: function (song) {this.changeSong(song)} },
+      { select: ".play",
+        action: function (song) {this.togglePlay(song)} },
+      { select: ".stop", action: this.stop },
+      { select: ".next", action: this.next },
+      { select: ".previous", action: this.previous }
+    ];
     document.observe("click", function (event) {
-      var song = event.findElement(".streamersong");
-      if (song && song.descendantOf(this.element)) {
-        event.stop();
-        this.changeSong(song);
-        return;
-      }
-      var play = event.findElement(".play");
-      if (play && play.descendantOf(this.element)) {
-        event.stop();
-        this.togglePlay(play);
-        return;
-      }
-      var stop = event.findElement(".stop");
-      if (stop && stop.descendantOf(this.element)) {
-        event.stop();
-        this.stop();
-        return;
-      }
-      var next = event.findElement(".next");
-      if (next && next.descendantOf(this.element)) {
-        event.stop();
-        this.next();
-        return;
-      }
-      var prev = event.findElement(".previous");
-      if (prev && prev.descendantOf(this.element)) {
-        event.stop();
-        this.previous();
-        return;
+      event.stop();
+      for (var i=0; i < this.clickHandlers.length; i++) {
+        var handler = this.clickHandlers[i];
+        var elem = event.findElement(handler.select);
+        if (elem && elem.descendantOf(this.element)) {
+          event.stop();
+          handler.action.call(this, elem);
+          return;
+        }
       }
     }.bind(this));
   },
@@ -77,7 +71,7 @@ var Streamer = Class.create({
   },
   pause: function () {
     if (this.activeSong) this.activeSong.pause();
-    this.element.down(".pause").removeClassName("pause");
+    this.element.down(".play").removeClassName("pause");
     clearInterval(this.progressTimer);
   },
   stop: function () {
@@ -109,8 +103,8 @@ var Streamer = Class.create({
         this.initPlayer();
       }.bind(this),
       onFailure: function (response) {
-        //console.log("error");
-      }
+        this.displayError("Could not get the playlist");
+      }.bind(this)
     })
   },
   parsePlaylist: function (xml) {
@@ -132,6 +126,9 @@ var Streamer = Class.create({
     this.songs.each(function (song) {
       list.insert(this.songTemplate.evaluate(song));
     }.bind(this));
+  },
+  displayError: function (err) {
+    this.element.innerHTML = "<p class=\"error\">"+err+"</p>";
   }
 });
 
