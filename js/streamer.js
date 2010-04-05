@@ -5,8 +5,6 @@ var Streamer = Class.create({
     this.songs = [];
     this.activeSong;
     this.progressTimer;
-    this.pauseText = "&#10074;&#10074;";
-    this.playText = "&#9658;";
     this.songTemplate = new Template("<li class=\"streamersong\"><a href=\"#{url}\">#{title}</a></li>");
     this.refreshPlaylist();
     document.observe("click", function (event) {
@@ -74,12 +72,12 @@ var Streamer = Class.create({
     if (!this.activeSong)
       this.changeSong(this.element.down(".streamersong"));
     this.activeSong.play();
-    this.element.down(".play").innerHTML = this.pauseText;
+    this.element.down(".play").addClassName("pause");
     this.progressTimer = setInterval(this.updateProgress.bind(this), 500);
   },
   pause: function () {
     if (this.activeSong) this.activeSong.pause();
-    this.element.down(".play").innerHTML = this.playText;
+    this.element.down(".pause").removeClassName("pause");
     clearInterval(this.progressTimer);
   },
   stop: function () {
@@ -95,9 +93,9 @@ var Streamer = Class.create({
   updateProgress: function () {
     var width = 0;
     if (this.activeSong)
-      width = (this.activeSong.currentTime / this.activeSong.duration) * 100;
+      width = (this.activeSong.currentTime / this.activeSong.duration) * 250;
     this.element.down(".progress").setStyle({
-      width: width + "%"
+      width: width + "px"
     });
   },
   refreshPlaylist: function () {
@@ -127,7 +125,7 @@ var Streamer = Class.create({
     return ret;
   },
   initPlayer: function () {
-    this.element.insert({top: "<div class=\"bar\"><div class=\"progress\"></div><div class=\"controls\"><span class=\"previous\">|&lt;</span><span class=\"stop\">&#9632;</span><span class=\"play\">&#9658;</span><span class=\"next\">&gt;|</span></div><div class=\"title\"></div></div>"});
+    this.element.insert({top: "<div class=\"bar\"><div class=\"progress\"></div><div class=\"controls\"><span class=\"previous\"></span><span class=\"stop\"></span><span class=\"play\"></span><span class=\"next\"></span></div><div class=\"title\"></div></div>"});
     this.element.insert("<ol></ol>");
     var list = this.element.down("ol");
     this.songs.each(function (song) {
