@@ -4,7 +4,7 @@ var Streamer = Class.create({
     this.element = element;
     try { new Audio(); }
     catch (err) {
-      this.displayError("<p class=\"error\">The &lt;audio&gt; element is not supported by your browser</p>");
+      this.displayError("The &lt;audio&gt; element is not supported by your browser :-(");
       return;
     };
     this.songs = [];
@@ -13,10 +13,8 @@ var Streamer = Class.create({
     this.songTemplate = new Template("<li class=\"streamersong\"><a href=\"#{url}\">#{title}</a></li>");
     this.refreshPlaylist();
     this.clickHandlers = [
-      { select: ".streamersong",
-        action: function (song) {this.changeSong(song)} },
-      { select: ".play",
-        action: function (song) {this.togglePlay(song)} },
+      { select: ".streamersong", action: function (song) {this.changeSong(song)} },
+      { select: ".play", action: function (song) {this.togglePlay(song)} },
       { select: ".stop", action: this.stop },
       { select: ".next", action: this.next },
       { select: ".previous", action: this.previous }
@@ -128,7 +126,7 @@ var Streamer = Class.create({
     }.bind(this));
   },
   displayError: function (err) {
-    this.element.innerHTML = "<p class=\"error\">"+err+"</p>";
+    this.element.innerHTML = "<div class=\"bar\"><div class=\"title error\">"+err+"</div></div>";
   }
 });
 
