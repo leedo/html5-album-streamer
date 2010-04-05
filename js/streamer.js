@@ -87,6 +87,7 @@ var Streamer = Class.create({
       this.pause();
       if (this.activeSong.currentTime) this.activeSong.currentTime = 0;
       this.activeSong = undefined;
+      this.updateProgress();
     }
     clearInterval(this.progressTimer);
   },
