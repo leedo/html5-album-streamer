@@ -97,7 +97,7 @@ var Streamer = Class.create({
       method: "get",
       parameters: {url: this.playlist_url},
       onSuccess: function (response) {
-        this.songs = this.parsePlaylist(response.responseText);
+        this.parsePlaylist(response.responseText);
         this.initPlayer();
       }.bind(this),
       onFailure: function (response) {
@@ -108,17 +108,20 @@ var Streamer = Class.create({
   parsePlaylist: function (xml) {
     var urls = xml.match(/<location>.*?<\/location>/g);
     var titles = xml.match(/<title>.*?<\/title>/g);
+    var image = xml.match(/<image>(.*?)<\/image>/);
+    if (image)
+      this.image = image[1];
     titles.shift(); // get rid of feed title
-    var ret = [];
     for (var i=0; i < urls.length; i++) {
       var url = urls[i].match(/<location>(.*?)<\/location>/);
       var title = titles[i].match(/<title>(.*?)<\/title>/);
-      ret.push({url: url[1], title: (i+1)+". "+title[1]});
+      this.songs.push({url: url[1], title: (i+1)+". "+title[1]});
     }
-    return ret;
   },
   initPlayer: function () {
     this.element.insert({top: "<div class=\"bar\"><div class=\"progress\"></div><div class=\"controls\"><span class=\"previous\"></span><span class=\"stop\"></span><span class=\"play\"></span><span class=\"next\"></span></div><div class=\"title\"></div></div>"});
+    if (this.image)
+      this.element.insert("<img src=\""+this.image+"\" />");
     this.element.insert("<ol></ol>");
     var list = this.element.down("ol");
     this.songs.each(function (song) {
