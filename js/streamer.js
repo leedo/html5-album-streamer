@@ -2,12 +2,14 @@ var Streamer = Class.create({
   initialize: function (element) {
     this.playlist_url = element.getAttribute("rel");
     this.element = element;
-    try { new Audio(); }
-    catch (err) {
-      this.displayError("The &lt;audio&gt; element is not supported by your browser :-(");
-      return;
-    };
     this.songs = [];
+    this.mimeMap = {
+      mp3: "audio/mpeg",
+      ogg: "audio/ogg",
+      oga: "audio/ogg",
+      wav: "audio/x-wav",
+      flac: "audio/flac"
+    };
     this.activeSong;
     this.progressTimer;
     this.songTemplate = new Template("<li class=\"streamersong\"><a href=\"#{url}\">#{title}</a></li>");
@@ -29,14 +31,33 @@ var Streamer = Class.create({
       }.bind(this));
     }.bind(this));
   },
+  canPlayType: function (mime) {
+    var elem = document.createElement('audio');
+    var r = elem.canPlayType(mime);
+    return r == 'maybe' || r == 'probably';
+  },
+  getMime: function (href) {
+    var ext = href.match(/.*\.(.+?)(?:$|\?)/);
+    if (ext) {
+      return this.mimeMap[ext[1]];
+    }
+  },
   changeSong: function (elem) {
     this.stop();
-    elem.addClassName("active");
     this.updateProgress();
-    this.activeSong = new Audio(elem.down("a").href);
-    this.activeSong.observe("ended", this.next.bind(this));
-    this.element.down(".title").innerHTML = elem.down("a").innerHTML;
-    this.play();
+    var a = elem.down('a');
+    var mime = this.getMime(a.href);
+    if (this.canPlayType(mime)) {
+      elem.addClassName("active");
+      this.activeSong = document.createElement('audio');
+      this.activeSong.src = a.href;
+      this.activeSong.observe("ended", this.next.bind(this));
+      this.element.down(".title").innerHTML = a.innerHTML;
+      this.play();
+    }
+    else {
+      this.displayError("Your browser can not play "+mime+" files");
+    }
   },
   togglePlay: function (elem) {
     if (!this.activeSong || (this.activeSong && this.activeSong.paused))
@@ -63,9 +84,11 @@ var Streamer = Class.create({
   play: function () {
     if (!this.activeSong)
       this.changeSong(this.element.down(".streamersong"));
-    this.activeSong.play();
-    this.element.down(".play").addClassName("pause");
-    this.progressTimer = setInterval(this.updateProgress.bind(this), 500);
+    if (this.activeSong) {
+      this.activeSong.play();
+      this.element.down(".play").addClassName("pause");
+      this.progressTimer = setInterval(this.updateProgress.bind(this), 500);
+    }
   },
   pause: function () {
     if (this.activeSong) this.activeSong.pause();
@@ -126,9 +149,11 @@ var Streamer = Class.create({
     this.songs.each(function (song) {
       list.insert(this.songTemplate.evaluate(song));
     }.bind(this));
+    if (!this.canPlayType)
+      this.displayError("The &lt;audio&gt; element is not supported by your browser");
   },
   displayError: function (err) {
-    this.element.innerHTML = "<div class=\"bar\"><div class=\"title error\">"+err+"</div></div>";
+    this.element.down(".title").innerHTML = "<span class=\"error\">"+err+" :-(</span>";
   }
 });
 
