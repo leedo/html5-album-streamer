@@ -3,16 +3,8 @@ var Streamer = Class.create({
     this.playlist_url = element.getAttribute("rel");
     this.element = element;
     this.songs = [];
-    this.mimeMap = {
-      mp3: "audio/mpeg",
-      ogg: "audio/ogg",
-      oga: "audio/ogg",
-      wav: "audio/x-wav",
-      flac: "audio/flac"
-    };
     this.activeSong;
     this.progressTimer;
-    this.songTemplate = new Template("<li class=\"streamersong\"><a href=\"#{url}\">#{title}</a></li>");
     this.refreshPlaylist();
     this.clickHandlers = [
       [ ".streamersong", function(e){this.changeSong(e)} ],
@@ -31,23 +23,12 @@ var Streamer = Class.create({
       }.bind(this));
     }.bind(this));
   },
-  canPlayType: function (mime) {
-    var elem = document.createElement('audio');
-    var r = elem.canPlayType(mime);
-    return r == 'maybe' || r == 'probably';
-  },
-  getMime: function (href) {
-    var ext = href.match(/.*\.(.+?)(?:$|\?)/);
-    if (ext) {
-      return this.mimeMap[ext[1]];
-    }
-  },
   changeSong: function (elem) {
     this.stop();
     this.updateProgress();
     var a = elem.down('a');
-    var mime = this.getMime(a.href);
-    if (this.canPlayType(mime)) {
+    var mime = Streamer.getMime(a.href);
+    if (Streamer.canPlayType(mime)) {
       elem.addClassName("active");
       this.activeSong = document.createElement('audio');
       this.activeSong.src = a.href;
@@ -147,14 +128,36 @@ var Streamer = Class.create({
     this.element.insert("<ol></ol>");
     var list = this.element.down("ol");
     this.songs.each(function (song) {
-      list.insert(this.songTemplate.evaluate(song));
+      list.insert(Streamer.songTemplate.evaluate(song));
     }.bind(this));
-    if (!this.canPlayType)
+    if (!Streamer.canPlayType())
       this.displayError("The &lt;audio&gt; element is not supported by your browser");
   },
   displayError: function (err) {
     this.element.down(".title").innerHTML = "<span class=\"error\">"+err+" :-(</span>";
   }
+});
+
+Object.extend(Streamer, {
+  songTemplate: new Template("<li class=\"streamersong\"><a href=\"#{url}\">#{title}</a></li>"),
+  mimeMap: {
+    mp3: "audio/mpeg",
+    ogg: "audio/ogg",
+    oga: "audio/ogg",
+    wav: "audio/x-wav",
+    flac: "audio/flac"
+  },
+  canPlayType: function (mime) {
+    var elem = document.createElement('audio');
+    var r = elem.canPlayType(mime);
+    return r == 'maybe' || r == 'probably';
+  },
+  getMime: function (href) {
+    var ext = href.match(/.*\.(.+?)(?:$|\?)/);
+    if (ext) {
+      return Streamer.mimeMap[ext[1]];
+    }
+  },
 });
 
 document.observe("dom:loaded", function () {
