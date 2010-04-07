@@ -42,7 +42,7 @@
   border-bottom: none;
 }
 .streamer .bar {
-  height: 12px;
+  height: 13px;
   background: #fff;
   border: 2px solid #ccc;
   margin-bottom: 2px;
@@ -50,7 +50,7 @@
 }
 .streamer .controls span {
   display: block;
-  height: 12px;
+  height: 13px;
   color: #999;
   display: block;
   float: left;
@@ -60,7 +60,7 @@
 .streamer .progress {
   position: absolute;
   left: 68px;
-  height: 12px;
+  height: 13px;
   width: 0px;
   background: #eee;
   z-index: 10;
