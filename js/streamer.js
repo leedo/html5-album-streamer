@@ -13,22 +13,20 @@ var Streamer = Class.create({
     this.songTemplate = new Template("<li class=\"streamersong\"><a href=\"#{url}\">#{title}</a></li>");
     this.refreshPlaylist();
     this.clickHandlers = [
-      { select: ".streamersong", action: function (song) {this.changeSong(song)} },
-      { select: ".play", action: function (song) {this.togglePlay(song)} },
-      { select: ".stop", action: this.stop },
-      { select: ".next", action: this.next },
-      { select: ".previous", action: this.previous }
+      [ ".streamersong", function(e){this.changeSong(e)} ],
+      [ ".play", function(e){this.togglePlay(e)} ],
+      [ ".stop", this.stop ],
+      [ ".next", this.next ],
+      [ ".previous", this.previous ]
     ];
     this.element.observe("click", function (event) {
-      for (var i=0; i < this.clickHandlers.length; i++) {
-        var handler = this.clickHandlers[i];
-        var elem = event.findElement(handler.select);
+      this.clickHandlers.each(function (handler) {
+        var elem = event.findElement(handler[0]);
         if (elem) {
           event.stop();
-          handler.action.call(this, elem);
-          return;
+          handler[1].call(this, elem);
         }
-      }
+      }.bind(this));
     }.bind(this));
   },
   changeSong: function (elem) {
