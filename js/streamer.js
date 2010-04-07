@@ -94,7 +94,6 @@ var Streamer = Class.create({
     });
   },
   refreshPlaylist: function () {
-    console.log(this.playlist_url);
     new Ajax.Request("/playlist", {
       method: "get",
       parameters: {url: this.playlist_url},
