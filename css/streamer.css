@@ -1,0 +1,122 @@
+.streamer {
+  width: 400px;
+  background: #fff;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding-bottom: 2px;
+}
+.streamer ol {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  max-height: 150px;
+  overflow-y: auto;
+  border: 2px solid #ccc;
+  list-style: none;
+  margin-right: 2px;
+  background: #ccc;
+}
+.streamer ol li {
+  border-bottom: 2px solid #ccc;
+  color: #999;
+}
+.streamer ol a {
+  overflow: hidden;
+  padding: 2px;
+  text-decoration: none;
+  display: block;
+  background: #efefef;
+  color: #888;
+  white-space: nowrap;
+  outline: none;
+}
+.streamer a:hover {
+  color: #666;
+}
+.streamer li.active a {
+  background: #fff;
+}
+.streamer li:last-child {
+  border-bottom: none;
+}
+.streamer .bar {
+  height: 12px;
+  background: #fff;
+  border: 2px solid #ccc;
+  margin-bottom: 2px;
+  position: relative;
+}
+.streamer span {
+  display: block;
+  height: 12px;
+  color: #999;
+  font-size: 11px;
+  display: block;
+  float: left;
+  padding: 0 1px;
+  cursor: pointer;
+}
+.streamer span:hover {
+  color: #666;
+}
+.streamer .progress {
+  position: absolute;
+  left: 68px;
+  height: 12px;
+  width: 0px;
+  background: #eee;
+  z-index: 10;
+}
+.streamer .title {
+  position: absolute;
+  left: 68px;
+  padding-left: 4px;
+  right: 0px;
+  height: 11px;
+  top: 0px;
+  padding-top: 2px;
+  overflow: hidden;
+  color: #888;
+  z-index: 21;
+}
+.streamer .title.error {
+  left: 0px;
+  background: #eee;
+}
+.streamer .stop {
+  width: 14px;
+  background: url("img/stop.png") 0 -1px no-repeat #ccc;
+}
+.streamer span.play {
+  width: 14px;
+  background: url("img/play.png") 0 -1px no-repeat #ccc;
+}
+.streamer span.play.pause {
+  background: url("img/pause.png") -1px -1px no-repeat #ccc;
+}
+.streamer span.next {
+  width: 17px;
+  background: url("img/next.png") 0 -1px no-repeat #ccc;
+}
+.streamer span.previous {
+  width: 15px;
+  background: url("img/prev.png") 0 -1px no-repeat #ccc;
+}
+.streamer .controls {
+  position: absolute;
+  left: 0px;
+  height: 12px;
+  width: 67px
+  z-index: 20;
+  background: #ccc;
+}
+.streamer img {
+  width: 111px;
+  height: 111px;
+  border: 2px solid #ccc;
+  background: #eee;
+  margin: 0 2px;
+  float: left;
+}

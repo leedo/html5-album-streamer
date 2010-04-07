@@ -5,7 +5,7 @@ use Plack::Request;
 my $proxy = Plack::App::Proxy->new->to_app;
 
 builder {
-  enable "Static", path => qr{^/(js|img)/}, root => "./";
+  enable "Static", path => qr{^/(js|css|img)/}, root => "./";
   mount "/" => Plack::App::File->new(file => "index.html");
   mount "/playlist" => sub {
     my $req = Plack::Request->new(shift);
