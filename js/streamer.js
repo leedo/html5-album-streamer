@@ -19,12 +19,11 @@ var Streamer = Class.create({
       { select: ".next", action: this.next },
       { select: ".previous", action: this.previous }
     ];
-    document.observe("click", function (event) {
-      event.stop();
+    this.element.observe("click", function (event) {
       for (var i=0; i < this.clickHandlers.length; i++) {
         var handler = this.clickHandlers[i];
         var elem = event.findElement(handler.select);
-        if (elem && elem.descendantOf(this.element)) {
+        if (elem) {
           event.stop();
           handler.action.call(this, elem);
           return;
@@ -51,8 +50,11 @@ var Streamer = Class.create({
     var active = this.element.down(".active");
     if (!active)
       this.play();
-    else {
+    else if (active.next()) {
       this.changeSong(active.next());
+    }
+    else {
+      this.stop();
     }
   },
   previous: function () {
