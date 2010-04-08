@@ -130,7 +130,7 @@ var Streamer = Class.create({
     this.songs.each(function (song) {
       list.insert(Streamer.songTemplate.evaluate(song));
     }.bind(this));
-    if (!Streamer.canPlayType())
+    if (!Streamer.canPlayAudio())
       this.displayError("The &lt;audio&gt; element is not supported by your browser");
   },
   displayError: function (err) {
@@ -141,7 +141,7 @@ var Streamer = Class.create({
 Object.extend(Streamer, {
   songTemplate: new Template("<li class=\"streamersong\"><a href=\"#{url}\">#{title}</a></li>"),
   mimeMap: {
-    mp3: "audio/mpeg",
+    mp3: "audio/mpeg3",
     ogg: "audio/ogg",
     oga: "audio/ogg",
     wav: "audio/x-wav",
@@ -149,8 +149,15 @@ Object.extend(Streamer, {
   },
   canPlayType: function (mime) {
     var elem = document.createElement('audio');
-    var r = elem.canPlayType(mime);
-    return r == 'maybe' || r == 'probably';
+    if (elem.canPlayType) {
+      var r = elem.canPlayType(mime);
+      return r == 'maybe' || r == 'probably';
+    }
+    return false;
+  },
+  canPlayAudio: function () {
+    var elem = document.createElement('audio');
+    return !!elem.canPlayType;
   },
   getMime: function (href) {
     var ext = href.match(/.*\.(.+?)(?:$|\?)/);
