@@ -90,7 +90,7 @@ var Streamer = Class.create({
   updateProgress: function () {
     var width = 0;
     if (this.activeSong)
-      width = (this.activeSong.currentTime / this.activeSong.duration) * 250;
+      width = (this.activeSong.currentTime / this.activeSong.duration) * this.progressWidth();
     this.element.down(".progress").setStyle({
       width: width + "px"
     });
@@ -121,7 +121,13 @@ var Streamer = Class.create({
       this.songs.push({url: url[1], title: (i+1)+". "+title[1]});
     }
   },
+  progressWidth: function () {
+    if (!this._progressWidth)
+      this._progressWidth = this.element.down(".bar").getWidth() - this.element.down(".controls").getWidth();
+    return this._progressWidth;
+  },
   initPlayer: function () {
+    this.element.innerHTML = "";
     this.element.insert({top: "<div class=\"bar\"><div class=\"progress\"></div><div class=\"controls\"><span class=\"previous\"></span><span class=\"stop\"></span><span class=\"play\"></span><span class=\"next\"></span></div><div class=\"title\"></div></div>"});
     if (this.image)
       this.element.insert("<img src=\""+this.image+"\" />");
