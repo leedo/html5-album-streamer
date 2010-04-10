@@ -147,7 +147,9 @@ var Streamer = Class.create({
 Object.extend(Streamer, {
   songTemplate: new Template("<li class=\"streamersong\"><a href=\"#{url}\">#{title}</a></li>"),
   mimeMap: {
-    mp3: "audio/mpeg3",
+    mp3: "audio/mpeg",
+    m4a: "audio/mp4",
+    mp4: "audio/mp4",
     ogg: "audio/ogg",
     oga: "audio/ogg",
     wav: "audio/x-wav",
