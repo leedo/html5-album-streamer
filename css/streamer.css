@@ -116,3 +116,11 @@
   margin: 0 2px;
   float: left;
 }
+
+.streamer input[type=range] {
+  position: absolute;
+  top: -2px;
+  right: 0px;
+  width: 50px;
+  z-index: 30;
+}

@@ -2,6 +2,7 @@ var Streamer = Class.create({
   initialize: function (element) {
     this.playlist_url = element.getAttribute("rel");
     this.element = element;
+    this.volume = 50;
     this.songs = [];
     this.activeSong;
     this.progressTimer;
@@ -31,6 +32,7 @@ var Streamer = Class.create({
     if (Streamer.canPlayType(mime)) {
       elem.addClassName("active");
       this.activeSong = document.createElement('audio');
+      this.activeSong.volume = this.volume / 100;
       this.activeSong.src = a.href;
       this.activeSong.observe("ended", this.next.bind(this));
       this.element.down(".title").innerHTML = a.innerHTML;
@@ -128,9 +130,12 @@ var Streamer = Class.create({
   },
   initPlayer: function () {
     this.element.innerHTML = "";
-    this.element.insert({top: "<div class=\"bar\"><div class=\"progress\"></div><div class=\"controls\"><span class=\"previous\"></span><span class=\"stop\"></span><span class=\"play\"></span><span class=\"next\"></span></div><div class=\"title\"></div></div>"});
+    this.element.insert({top: '<div class="bar"><div class="progress"></div><div class="controls"><span class="previous"></span><span class="stop"></span><span class="play"></span><span class="next"></span></div><div class="title"></div><input type="range" name="volume" min="0" max="100" step="1" value="'+this.volume+'" /></div>'});
     if (this.image)
       this.element.insert("<img src=\""+this.image+"\" />");
+    this.element.down('input[type="range"]').observe("change", function (e) {
+      this.updateVolume(e.target.value);
+    }.bind(this));
     this.element.insert("<ol></ol>");
     var list = this.element.down("ol");
     this.songs.each(function (song) {
@@ -141,6 +146,11 @@ var Streamer = Class.create({
   },
   displayError: function (err) {
     this.element.down(".title").innerHTML = "<span class=\"error\">"+err+" :-(</span>";
+  },
+  updateVolume: function (vol) {
+    this.volume = vol;
+    if (this.activeSong)
+      this.activeSong.volume = vol / 100;
   }
 });
 
