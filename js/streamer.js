@@ -133,7 +133,7 @@ var Streamer = Class.create({
     this.element.insert({top: '<div class="bar"><div class="progress"></div><div class="controls"><span class="previous"></span><span class="stop"></span><span class="play"></span><span class="next"></span></div><div class="title"></div><input type="range" name="volume" min="0" max="100" step="1" value="'+this.volume+'" /></div>'});
     if (this.image)
       this.element.insert("<img src=\""+this.image+"\" />");
-    this.element.down('input[type="range"]').observe("change", function (e) {
+    this.element.down('input[name="volume"]').observe("change", function (e) {
       this.updateVolume(e.target.value);
     }.bind(this));
     this.element.insert("<ol></ol>");
