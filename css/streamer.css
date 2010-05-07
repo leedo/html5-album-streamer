@@ -123,6 +123,7 @@
   bottom: 0px;
   width: 17px;
   z-index: 999;
+  background: url("/img/vol-bg.png") left 50% no-repeat;
 }
 .volume_bg {
   display: block;
