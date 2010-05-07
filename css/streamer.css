@@ -116,11 +116,17 @@
   margin: 0 2px;
   float: left;
 }
-
-.streamer input[type=range] {
+.volume {
   position: absolute;
-  top: -2px;
-  right: 0px;
-  width: 50px;
-  z-index: 30;
+  left: 376px;
+  top: 0px;
+  bottom: 0px;
+  width: 17px;
+  z-index: 999;
+}
+.volume_bg {
+  display: block;
+  background: url("/img/vol.png") left 50% no-repeat;
+  width: 17px;
+  height: 100%;
 }

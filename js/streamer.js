@@ -12,14 +12,15 @@ var Streamer = Class.create({
       [ ".play", function(e){this.togglePlay(e)} ],
       [ ".stop", this.stop ],
       [ ".next", this.next ],
-      [ ".previous", this.previous ]
+      [ ".previous", this.previous ],
+      [ ".volume", this.updateVolume ]
     ];
     this.element.observe("click", function (event) {
       this.clickHandlers.each(function (handler) {
         var elem = event.findElement(handler[0]);
         if (elem) {
           event.stop();
-          handler[1].call(this, elem);
+          handler[1].call(this, elem, event);
         }
       }.bind(this));
     }.bind(this));
@@ -130,12 +131,9 @@ var Streamer = Class.create({
   },
   initPlayer: function () {
     this.element.innerHTML = "";
-    this.element.insert({top: '<div class="bar"><div class="progress"></div><div class="controls"><span class="previous"></span><span class="stop"></span><span class="play"></span><span class="next"></span></div><div class="title"></div><input type="range" name="volume" min="0" max="100" step="1" value="'+this.volume+'" /></div>'});
+    this.element.insert({top: '<div class="bar"><div class="progress"></div><div class="controls"><span class="previous"></span><span class="stop"></span><span class="play"></span><span class="next"></span></div><div class="title"></div><div class="volume"><div class="volume_bg"></div></div></div>'});
     if (this.image)
       this.element.insert("<img src=\""+this.image+"\" />");
-    this.element.down('input[name="volume"]').observe("change", function (e) {
-      this.updateVolume(e.target.value);
-    }.bind(this));
     this.element.insert("<ol></ol>");
     var list = this.element.down("ol");
     this.songs.each(function (song) {
@@ -147,10 +145,12 @@ var Streamer = Class.create({
   displayError: function (err) {
     this.element.down(".title").innerHTML = "<span class=\"error\">"+err+" :-(</span>";
   },
-  updateVolume: function (vol) {
-    this.volume = vol;
+  updateVolume: function (elem, event) {
+    var vol = event.offsetX;
+    elem.down(".volume_bg").setStyle({width: vol+"px"});
+    this.volume = vol / 17;
     if (this.activeSong)
-      this.activeSong.volume = vol / 100;
+      this.activeSong.volume = this.volume;
   }
 });
 
