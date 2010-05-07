@@ -6,6 +6,7 @@
   text-transform: uppercase;
   letter-spacing: 1px;
   padding-bottom: 2px;
+  overflow: hidden;
 }
 .streamer ol {
   margin: 0;
