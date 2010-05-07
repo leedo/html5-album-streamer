@@ -36,6 +36,9 @@ var Streamer = Class.create({
       this.activeSong.volume = this.volume / 100;
       this.activeSong.src = a.href;
       this.activeSong.observe("ended", this.next.bind(this));
+      this.activeSong.observe("error", function (e) {
+        this.displayError("Your browser can not play "+mime+" files");
+      }.bind(this));
       this.element.down(".title").innerHTML = a.innerHTML;
       this.play();
     }
