@@ -96,10 +96,9 @@ var Streamer = Class.create({
   updateProgress: function () {
     var width = 0;
     if (this.activeSong)
-      width = (this.activeSong.currentTime / this.activeSong.duration) * this.progressWidth();
-    this.element.down(".progress").setStyle({
-      width: width + "px"
-    });
+      width = (this.activeSong.currentTime / this.activeSong.duration)
+              * this.progressWidth();
+    this.element.down(".progress").setStyle({width: width+"px"});
   },
   refreshPlaylist: function () {
     new Ajax.Request("/playlist", {
@@ -121,6 +120,7 @@ var Streamer = Class.create({
     if (image)
       this.image = image[1];
     titles.shift(); // get rid of feed title
+    this.songs = [];
     for (var i=0; i < urls.length; i++) {
       var url = urls[i].match(/<location>(.*?)<\/location>/);
       var title = titles[i].match(/<title>(.*?)<\/title>/);
@@ -141,7 +141,7 @@ var Streamer = Class.create({
     var list = this.element.down("ol");
     this.songs.each(function (song) {
       list.insert(Streamer.songTemplate.evaluate(song));
-    }.bind(this));
+    });
     if (!Streamer.canPlayAudio())
       this.displayError("The &lt;audio&gt; element is not supported by your browser");
   },
