@@ -2,7 +2,7 @@ var Streamer = Class.create({
   initialize: function (element) {
     this.playlist_url = element.getAttribute("rel");
     this.element = element;
-    this.volume = 50;
+    this.volume = 100;
     this.songs = [];
     this.activeSong;
     this.progressTimer;
