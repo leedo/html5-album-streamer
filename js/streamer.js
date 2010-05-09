@@ -6,7 +6,13 @@ var Streamer = Class.create({
     this.songs = [];
     this.activeSong;
     this.progressTimer;
-    this.refreshPlaylist();
+    if (Streamer.isAudioURL(this.playlist_url)) {
+      var filename = Streamer.extractFilename(this.playlist_url);
+      this.songs = [{url: this.playlist_url, title: filename}];
+      this.buildPlayer();
+    } else {
+      this.downloadPlaylist();
+    }
     this.clickHandlers = [
       [ ".streamersong", function(e){this.changeSong(e)} ],
       [ ".play", function(e){this.togglePlay(e)} ],
@@ -100,13 +106,13 @@ var Streamer = Class.create({
               * this.progressWidth();
     this.element.down(".progress").setStyle({width: width+"px"});
   },
-  refreshPlaylist: function () {
+  downloadPlaylist: function () {
     new Ajax.Request("/playlist", {
       method: "get",
       parameters: {url: this.playlist_url},
       onSuccess: function (response) {
         this.parsePlaylist(response.responseText);
-        this.initPlayer();
+        this.buildPlayer();
       }.bind(this),
       onFailure: function (response) {
         this.displayError("Could not get the playlist");
@@ -132,7 +138,7 @@ var Streamer = Class.create({
       this._progressWidth = this.element.down(".bar").getWidth() - this.element.down(".controls").getWidth();
     return this._progressWidth;
   },
-  initPlayer: function () {
+  buildPlayer: function () {
     this.element.innerHTML = "";
     this.element.insert({top: '<div class="bar"><div class="progress"></div><div class="controls"><span class="previous"></span><span class="stop"></span><span class="play"></span><span class="next"></span></div><div class="title"></div><div class="volume"><div class="volume_bg"></div></div></div>'});
     if (this.image)
@@ -142,6 +148,10 @@ var Streamer = Class.create({
     this.songs.each(function (song) {
       list.insert(Streamer.songTemplate.evaluate(song));
     });
+    if (this.songs.length <= 1 && !this.image) {
+      this.element.down(".title").innerHTML = this.songs[0].title;
+      list.hide();
+    }
     if (!Streamer.canPlayAudio())
       this.displayError("The &lt;audio&gt; element is not supported by your browser");
   },
@@ -167,6 +177,19 @@ Object.extend(Streamer, {
     oga: "audio/ogg",
     wav: "audio/x-wav",
     flac: "audio/flac"
+  },
+  extractFilename: function (url) {
+    var file = url.match(/([^\/]*)\.[\w\d]{3,4}$/);
+    if (file) {
+      return file[1];
+    }
+    return url;
+  },
+  isAudioURL: function (url) {
+    return Object.keys(Streamer.mimeMap).any(function (ext) {
+      var re = new RegExp("."+ext+"$","i");
+      return url.match(re);
+    })
   },
   canPlayType: function (mime) {
     var elem = document.createElement('audio');
