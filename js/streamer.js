@@ -150,6 +150,7 @@ var Streamer = Class.create({
     });
     if (this.songs.length <= 1 && !this.image) {
       this.element.down(".title").innerHTML = this.songs[0].title;
+      this.element.addClassName("singlesong");
       list.hide();
     }
     if (!Streamer.canPlayAudio())

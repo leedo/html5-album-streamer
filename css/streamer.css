@@ -8,6 +8,12 @@
   padding-bottom: 2px;
   overflow: hidden;
 }
+.streamer.singlesong {
+  padding-bottom: 0;
+}
+.streamer.singlesong .bar {
+  margin-bottom: 0;
+}
 .streamer ol {
   margin: 0;
   padding: 0;
