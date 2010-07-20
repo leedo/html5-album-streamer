@@ -7,6 +7,7 @@ var Streamer = Class.create({
     this.songs = [];
     this.activeSong;
     this.progressTimer;
+
     if (Streamer.isAudioURL(this.playlist_url)) {
       var filename = Streamer.extractFilename(this.playlist_url);
       this.songs = [{url: this.playlist_url, title: filename}];
