@@ -194,7 +194,29 @@ var Streamer = Class.create({
 });
 
 Object.extend(Streamer, {
-  songTemplate: new Template("<li class=\"streamersong\"><a href=\"#{url}\">#{title}</a></li>")
+  songTemplate: new Template("<li class=\"streamersong\"><a href=\"#{url}\">#{title}</a></li>"),
+  mimeMap: {
+    mp3: "audio/mpeg",
+    m4a: "audio/mp4",
+    mp4: "audio/mp4",
+    ogg: "audio/ogg",
+    oga: "audio/ogg",
+    wav: "audio/x-wav",
+    flac: "audio/flac"
+  },
+  extractFilename: function (url) {
+    var file = url.match(/([^\/]*)\.[\w\d]{3,4}$/);
+    if (file) {
+      return file[1];
+    }
+    return url;
+  },
+  isAudioURL: function (url) {
+    return Object.keys(Streamer.mimeMap).any(function (ext) {
+      var re = new RegExp("."+ext+"$","i");
+      return url.match(re);
+    })
+  }
 });
 
 document.observe("dom:loaded", function () {
