@@ -83,11 +83,11 @@ var Streamer = Class.create({
   },
 
   play: function () {
-    if (!this.activeSong)
+    if (!this.activeSong) {
       this.changeSong(this.element.down(".streamersong"));
-
-    if (this.activeSong) {
-      console.log(this.activeSong.sID);
+    }
+    else {
+      //console.log(this.activeSong.sID);
       soundManager.play(this.activeSong.sID);
       this.element.down(".play").addClassName("pause");
       this.progressTimer = setInterval(this.updateProgress.bind(this), 500);
@@ -187,7 +187,9 @@ var Streamer = Class.create({
   },
 
   updateVolume: function (elem, event) {
-    var vol = event.offsetX;
+    var x = event.clientX;
+    var offset = elem.cumulativeOffset().left;
+    var vol = x - offset;
     elem.down(".volume_bg").setStyle({width: vol+"px"});
     this.volume = (vol / 17) * 100;
     if (this.activeSong)
