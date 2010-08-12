@@ -170,6 +170,9 @@ var Streamer = Class.create({
     this.element.insert("<ol></ol>");
     var list = this.element.down("ol");
 
+    if (!this.image)
+      list.setStyle({marginLeft: "2px"});
+
     if (Prototype.Browser.MobileSafari)
       list.setStyle({maxHeight: "none"});
 
