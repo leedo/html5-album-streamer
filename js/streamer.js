@@ -169,6 +169,10 @@ var Streamer = Class.create({
       this.element.insert("<img src=\""+this.image+"\" />");
     this.element.insert("<ol></ol>");
     var list = this.element.down("ol");
+
+    if (Prototype.Browser.MobileSafari)
+      list.setStyle({maxHeight: "none"});
+
     this.songs.each(function (song) {
       list.insert(Streamer.songTemplate.evaluate(song));
     });
