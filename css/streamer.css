@@ -25,6 +25,12 @@
   margin-right: 2px;
   background: #ccc;
 }
+.streamer ol.iphone {
+  max-height: none;
+}
+.streamer ol.noimage {
+  margin-left: 2px;
+}
 .streamer ol li {
   border-bottom: 2px solid #ccc;
   color: #999;

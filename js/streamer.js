@@ -171,10 +171,10 @@ var Streamer = Class.create({
     var list = this.element.down("ol");
 
     if (!this.image)
-      list.setStyle({marginLeft: "2px"});
+      list.addClassName("noimage");
 
     if (Prototype.Browser.MobileSafari)
-      list.setStyle({maxHeight: "none"});
+      list.addClassName("iphone");
 
     this.songs.each(function (song) {
       list.insert(Streamer.songTemplate.evaluate(song));
