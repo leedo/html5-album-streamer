@@ -46,9 +46,12 @@ var Streamer = Class.create({
 
     if (soundManager.canPlayLink(a)) {
       elem.addClassName("active");
-      this.activeSong = soundManager.createSound(a.href, a.href);
+      this.activeSong = soundManager.createSound({
+        id: a.href,
+        url: a.href,
+        onfinish: this.next.bind(this)
+      });
       soundManager.setVolume(this.activeSong.sID, this.volume);
-      this.onfinish = this.next.bind(this);
       this.element.down(".title").innerHTML = a.innerHTML;
       this.play();
     }
@@ -87,7 +90,6 @@ var Streamer = Class.create({
       this.changeSong(this.element.down(".streamersong"));
     }
     else {
-      //console.log(this.activeSong.sID);
       soundManager.play(this.activeSong.sID);
       this.element.down(".play").addClassName("pause");
       this.progressTimer = setInterval(this.updateProgress.bind(this), 500);
