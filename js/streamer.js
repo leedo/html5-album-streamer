@@ -8,6 +8,9 @@ var Streamer = Class.create({
     this.activeSong;
     this.progressTimer;
 
+    // check if the url is just a link to a single
+    // audio file and not a playlist
+
     if (Streamer.isAudioURL(this.playlist_url)) {
       var filename = Streamer.extractFilename(this.playlist_url);
       this.songs = [{url: this.playlist_url, title: filename}];
@@ -15,8 +18,10 @@ var Streamer = Class.create({
     } else {
       this.downloadPlaylist();
     }
+
+    // setup handlers for play/pause/stop buttons
+
     this.clickHandlers = [
-      [ ".streamersong", function(e){this.changeSong(e)} ],
       [ ".play", function(e){this.togglePlay(e)} ],
       [ ".stop", this.stop ],
       [ ".next", this.next ],
@@ -34,6 +39,20 @@ var Streamer = Class.create({
       }.bind(this));
     }.bind(this));
 
+    // if the song can't be played just let the
+    // click event pass, so the browser opens the 
+    // .mp3 on it's own
+
+    this.element.observe("click", function(e) {
+      var a = e.findElement(".streamersong a");
+      if (!a) return;
+
+      var li = a.up('li');
+      if (soundManager.canPlayLink(a)) {
+        e.stop();
+        this.changeSong(li);
+      }
+    }.bind(this));
   },
 
   changeSong: function (elem) {
@@ -71,12 +90,10 @@ var Streamer = Class.create({
     var active = this.element.down(".active");
     if (!active)
       this.play();
-    else if (active.next()) {
+    else if (active.next())
       this.changeSong(active.next());
-    }
-    else {
+    else
       this.stop();
-    }
   },
 
   previous: function () {
@@ -207,7 +224,7 @@ var Streamer = Class.create({
 });
 
 Object.extend(Streamer, {
-  songTemplate: new Template("<li class=\"streamersong\"><a href=\"#{url}\">#{title}</a></li>"),
+  songTemplate: new Template("<li class=\"streamersong\"><a href=\"#{url}\" target=\"_blank\">#{title}</a></li>"),
   mimeMap: {
     mp3: "audio/mpeg",
     m4a: "audio/mp4",
