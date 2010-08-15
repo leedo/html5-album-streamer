@@ -8,4 +8,4 @@ To get all the dependencies for the proxy run the following commands:
 
 Then you can run the appication in this respository's root directory
 
-    twiggy app.psgi
+    plackup app.psgi
