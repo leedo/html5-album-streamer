@@ -4,7 +4,7 @@ HTTP proxy at the /playlist path.
 To get all the dependencies for the proxy run the following commands:
 
     curl -L http://cpanmin.us | perl - --sudo App::cpanminus
-    cpanm Twiggy Plack::App::Proxy
+    cpanm --sudo Twiggy Plack::App::Proxy
 
 Then you can run the appication in this respository's root directory
 
