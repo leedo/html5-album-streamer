@@ -126,7 +126,6 @@ var Streamer = Class.create({
       this.element.down(".active").removeClassName("active");
       this.element.down(".title").innerHTML = "";
       this.pause();
-      soundManager.stop(this.activeSong.sID);
       soundManager.destroySound(this.activeSong.sID);
       this.activeSong = undefined;
       this.updateProgress();
