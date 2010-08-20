@@ -152,6 +152,7 @@ var Streamer = Class.create({
         this.buildPlayer();
       }.bind(this),
       onFailure: function (response) {
+        this.buildPlayer();
         this.displayError("Could not get the playlist");
       }.bind(this)
     })
@@ -197,7 +198,8 @@ var Streamer = Class.create({
     });
 
     if (this.songs.length <= 1 && !this.image) {
-      this.element.down(".title").innerHTML = this.songs[0].title;
+      if (this.songs[0])
+        this.element.down(".title").innerHTML = this.songs[0].title;
       this.element.addClassName("singlesong");
       list.hide();
     }
