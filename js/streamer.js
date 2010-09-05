@@ -206,7 +206,7 @@ var Streamer = Class.create({
 
     soundManager.onerror = function() {
       this.displayError("The &lt;audio&gt; element is not supported by your browser");
-    };
+    }.bind(this);
   },
 
   displayError: function (err) {
