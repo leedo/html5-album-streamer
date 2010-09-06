@@ -7,6 +7,10 @@
       soundManager.url = '/swf/';
       soundManager.useHTML5Audio = true;
       soundManager.useFlashBlock = false;
+      soundManager.debugMode = false;
+      soundManager.audioFormats.mp4.required = false;
+      soundManager.audioFormats.mp3.required = false;
+      soundManager.html5Test = /^(probably|maybe)$/i;
     </script>
     <script type="text/javascript" src="js/streamer.js"></script>
     <link type="text/css" href="css/streamer.css" rel="stylesheet" />
