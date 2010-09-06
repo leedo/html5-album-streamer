@@ -18,29 +18,7 @@ Streamer = function(element) {
   } else {
     this.downloadPlaylist();
   }
-  this.clickHandlers = [
-    [
-      ".play", __bind(function(e) {
-        return this.togglePlay(e);
-      }, this)
-    ], [
-      ".stop", __bind(function() {
-        return this.stop();
-      }, this)
-    ], [
-      ".next", __bind(function() {
-        return this.next();
-      }, this)
-    ], [
-      ".previous", __bind(function() {
-        return this.previous();
-      }, this)
-    ], [
-      ".volume", __bind(function() {
-        return this.updateVolume();
-      }, this)
-    ]
-  ];
+  this.clickHandlers = [[".play", this.togglePlay], [".stop", this.stop], [".next", this.next], [".previous", this.previous], [".volume", this.updateVolume]];
   this.element.observe("click", __bind(function(e) {
     var _a, _b, _c, _d, elem, handler;
     _a = []; _c = this.clickHandlers;
@@ -49,9 +27,9 @@ Streamer = function(element) {
       _a.push((function() {
         if (elem = e.findElement(handler[0])) {
           e.stop();
-          return handler[1].call(elem, e);
+          return handler[1].call(this, elem, e);
         }
-      })());
+      }).call(this));
     }
     return _a;
   }, this));
@@ -88,9 +66,7 @@ Streamer.extractFilename = function(url) {
 };
 Streamer.isAudioURL = function(url) {
   return Object.keys(Streamer.mimeMap).any(function(ext) {
-    var re;
-    re = new RegExp("." + (ext) + "$", "i");
-    return url.match(re);
+    return url.match(new RegExp("." + (ext) + "$", "i"));
   });
 };
 Streamer.prototype.changeSong = function(elem) {

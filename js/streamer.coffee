@@ -17,9 +17,7 @@ class Streamer
     return url
 
   @isAudioURL: (url) ->
-    Object.keys(Streamer.mimeMap).any (ext) ->
-      re = new RegExp(".#{ext}$","i")
-      return url.match(re)
+    Object.keys(Streamer.mimeMap).any (ext) -> url.match /.#{ext}$/i
 
   constructor: (element) ->
     @playlist_url = element.getAttribute("rel")
@@ -37,18 +35,18 @@ class Streamer
       @downloadPlaylist()
 
     @clickHandlers = [
-      [ ".play", (e) => @togglePlay(e) ],
-      [ ".stop", => @stop() ],
-      [ ".next", => @next() ],
-      [ ".previous", => @previous() ],
-      [ ".volume", => @updateVolume() ]
+      [ ".play", @togglePlay ],
+      [ ".stop", @stop ],
+      [ ".next", @next ],
+      [ ".previous", @previous ],
+      [ ".volume", @updateVolume ]
     ]
 
     @element.observe "click", (e) =>
       for handler in @clickHandlers
         if elem = e.findElement handler[0]
           e.stop()
-          handler[1].call elem, e
+          handler[1].call @, elem, e
 
     @element.observe "click", (e) =>
       return unless a = e.findElement ".streamersong a"
