@@ -1,4 +1,26 @@
 class Streamer
+  @songTemplate: new Template('<li class="streamersong"><a href="#{url}" target="_blank">#{title}</a></li>')
+
+  @mimeMap: {
+    mp3: "audio/mpeg"
+    m4a: "audio/mp4"
+    mp4: "audio/mp4"
+    ogg: "audio/ogg"
+    oga: "audio/ogg"
+    wav: "audio/x-wav"
+    flac: "audio/flac"
+  }
+
+  @extractFilename: (url) ->
+    file = url.match(/([^\/]*)\.[\w\d]{3,4}$/)
+    return file[1] if file
+    return url
+
+  @isAudioURL: (url) ->
+    Object.keys(Streamer.mimeMap).any (ext) ->
+      re = new RegExp(".#{ext}$","i")
+      return url.match(re)
+
   constructor: (element) ->
     @playlist_url = element.getAttribute("rel")
     @element = element
@@ -44,11 +66,10 @@ class Streamer
 
     if soundManager.canPlayLink a
       elem.addClassName "active"
-      @activeSong = soundManager.createSound {
+      @activeSong = soundManager.createSound
         id: a.href,
         url: a.href,
         onfinish: => @next()
-      }
       soundManager.setVolume @activeSong.sID, @volume
       @element.down(".title").innerHTML = a.innerHTML
       @play()
@@ -106,20 +127,19 @@ class Streamer
     if @activeSong
       width = (@activeSong.position / @activeSong.duration) / @progressWidth()
 
-    @element.down(".progress").setStyle {width: width+"px"}
+    @element.down(".progress").setStyle width: width+"px"
 
   downloadPlaylist: ->
-    new Ajax.Request "playlist", {
-      method: "get",
-      parameters: {url: @playlist_url},
+    new Ajax.Request "playlist",
+      method: "get"
+      parameters: {url: @playlist_url}
       onSuccess: (response) =>
         @parsePlaylist response.responseText
         @buildPlayer()
       onFailure: (response) =>
         @buildPlayer()
         @displayError "Could not get the playlist"
-    }
-
+    
   parsePlaylist: (xml) ->
     urls = xml.match /<location>.*?<\/location>/g
     titles = xml.match /<title>.*?<\/title>/g
@@ -132,7 +152,7 @@ class Streamer
     for i in [0 .. urls.length - 1]
       url = urls[i].match /<location>(.*?)<\/location>/
       title = titles[i].match /<title>(.*?)<\/title>/
-      @songs.push {url: url[1], title: "#{i+1}. #{title[1]}"}
+      @songs.push url: url[1], title: "#{i+1}. #{title[1]}"
 
   progressWidth: ->
     unless @_progressWidth
@@ -142,7 +162,7 @@ class Streamer
 
   buildPlayer: ->
     @element.innerHTML = ""
-    @element.insert {top: '<div class="bar"><div class="progress"></div><div class="controls"><span class="previous"></span><span class="stop"></span><span class="play"></span><span class="next"></span></div><div class="title"></div><div class="volume"><div class="volume_bg"></div></div></div>'}
+    @element.insert top: '<div class="bar"><div class="progress"></div><div class="controls"><span class="previous"></span><span class="stop"></span><span class="play"></span><span class="next"></span></div><div class="title"></div><div class="volume"><div class="volume_bg"></div></div></div>'
 
     @element.insert "<img src=\"#{@image}\" />" if @image
     @element.insert "<ol></ol>"
@@ -168,33 +188,12 @@ class Streamer
     x = event.clientX
     offset = elem.cumulativeOffset().left
     vol = x - offset
-    elem.down(".volume_bg").setStyle {width: vol+"px"}
+    elem.down(".volume_bg").setStyle width: vol+"px"
     @volume = (vol / 17) * 100
 
     soundManager.setVolume(@activeSong.sID, @volume) if @activeSong
 
-Object.extend Streamer, {
-  songTemplate: new Template('<li class="streamersong"><a href="#{url}" target="_blank">#{title}</a></li>'),
-  mimeMap: {
-    mp3: "audio/mpeg",
-    m4a: "audio/mp4",
-    mp4: "audio/mp4",
-    ogg: "audio/ogg",
-    oga: "audio/ogg",
-    wav: "audio/x-wav",
-    flac: "audio/flac"
-  },
-  extractFilename: (url) ->
-    file = url.match(/([^\/]*)\.[\w\d]{3,4}$/)
-    return file[1] if file
-    return url
-
-  isAudioURL: (url) ->
-    Object.keys(Streamer.mimeMap).any (ext) ->
-      re = new RegExp(".#{ext}$","i")
-      return url.match(re)
-}
-
 document.observe "dom:loaded", ->
   for item in $$(".streamer")
     new Streamer item
+

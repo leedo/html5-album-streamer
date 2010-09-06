@@ -48,7 +48,6 @@ Streamer = function(element) {
       handler = _c[_b];
       _a.push((function() {
         if (elem = e.findElement(handler[0])) {
-          console.log(handler);
           e.stop();
           return handler[1].call(elem, e);
         }
@@ -68,6 +67,31 @@ Streamer = function(element) {
     }
   }, this));
   return this;
+};
+Streamer.songTemplate = new Template('<li class="streamersong"><a href="#{url}" target="_blank">#{title}</a></li>');
+Streamer.mimeMap = {
+  mp3: "audio/mpeg",
+  m4a: "audio/mp4",
+  mp4: "audio/mp4",
+  ogg: "audio/ogg",
+  oga: "audio/ogg",
+  wav: "audio/x-wav",
+  flac: "audio/flac"
+};
+Streamer.extractFilename = function(url) {
+  var file;
+  file = url.match(/([^\/]*)\.[\w\d]{3,4}$/);
+  if (file) {
+    return file[1];
+  }
+  return url;
+};
+Streamer.isAudioURL = function(url) {
+  return Object.keys(Streamer.mimeMap).any(function(ext) {
+    var re;
+    re = new RegExp("." + (ext) + "$", "i");
+    return url.match(re);
+  });
 };
 Streamer.prototype.changeSong = function(elem) {
   var a;
@@ -245,33 +269,6 @@ Streamer.prototype.updateVolume = function(elem, event) {
     return soundManager.setVolume(this.activeSong.sID, this.volume);
   }
 };
-Object.extend(Streamer, {
-  songTemplate: new Template('<li class="streamersong"><a href="#{url}" target="_blank">#{title}</a></li>'),
-  mimeMap: {
-    mp3: "audio/mpeg",
-    m4a: "audio/mp4",
-    mp4: "audio/mp4",
-    ogg: "audio/ogg",
-    oga: "audio/ogg",
-    wav: "audio/x-wav",
-    flac: "audio/flac"
-  },
-  extractFilename: function(url) {
-    var file;
-    file = url.match(/([^\/]*)\.[\w\d]{3,4}$/);
-    if (file) {
-      return file[1];
-    }
-    return url;
-  },
-  isAudioURL: function(url) {
-    return Object.keys(Streamer.mimeMap).any(function(ext) {
-      var re;
-      re = new RegExp("." + (ext) + "$", "i");
-      return url.match(re);
-    });
-  }
-});
 document.observe("dom:loaded", function() {
   var _a, _b, _c, _d, item;
   _a = []; _c = $$(".streamer");
