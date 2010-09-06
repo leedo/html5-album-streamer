@@ -34,14 +34,13 @@ Streamer = function(element) {
     return _a;
   }, this));
   this.element.observe("click", __bind(function(e) {
-    var a, li;
+    var a;
     if (!(a = e.findElement(".streamersong a"))) {
       return null;
     }
-    li = a.up("li");
     if (soundManager.canPlayLink(a)) {
       e.stop();
-      return this.changeSong(li);
+      return this.changeSong(a.up("li"));
     }
   }, this));
   return this;
@@ -93,7 +92,7 @@ Streamer.prototype.changeSong = function(elem) {
     return this.displayError("Your browser can not play this audio flie");
   }
 };
-Streamer.prototype.togglePlay = function(elem) {
+Streamer.prototype.togglePlay = function() {
   return !this.activeSong || this.activeSong.paused ? this.play() : this.pause();
 };
 Streamer.prototype.next = function() {
@@ -191,7 +190,7 @@ Streamer.prototype.parsePlaylist = function(xml) {
   return _a;
 };
 Streamer.prototype.progressWidth = function() {
-  if (!(this._progressWidth)) {
+  if (!this._progressWidth) {
     this._progressWidth = this.element.down(".bar").getWidth() - this.element.down(".controls").getWidth();
   }
   return this._progressWidth;

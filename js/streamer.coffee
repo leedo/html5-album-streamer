@@ -50,10 +50,9 @@ class Streamer
 
     @element.observe "click", (e) =>
       return unless a = e.findElement ".streamersong a"
-      li = a.up "li"
       if soundManager.canPlayLink a
         e.stop()
-        @changeSong li
+        @changeSong a.up "li"
 
   changeSong: (elem) ->
     @stop()
@@ -74,7 +73,7 @@ class Streamer
     else
       @displayError "Your browser can not play this audio flie"
 
-  togglePlay: (elem) ->
+  togglePlay: ->
     if !@activeSong or @activeSong.paused
       @play()
     else
@@ -103,9 +102,7 @@ class Streamer
       @progressTimer = setInterval (=> @updateProgress), 500
 
   pause: ->
-    if @activeSong
-      soundManager.pause @activeSong.sID
-
+    soundManager.pause @activeSong.sID if @activeSong
     @element.down(".play").removeClassName "pause"
     clearInterval @progressTimer
 
@@ -137,7 +134,7 @@ class Streamer
       onFailure: (response) =>
         @buildPlayer()
         @displayError "Could not get the playlist"
-    
+
   parsePlaylist: (xml) ->
     urls = xml.match /<location>.*?<\/location>/g
     titles = xml.match /<title>.*?<\/title>/g
@@ -153,7 +150,7 @@ class Streamer
       @songs.push url: url[1], title: "#{i+1}. #{title[1]}"
 
   progressWidth: ->
-    unless @_progressWidth
+    if !@_progressWidth
       @_progressWidth = @element.down(".bar").getWidth() - @element.down(".controls").getWidth()
 
     return @_progressWidth
@@ -192,6 +189,5 @@ class Streamer
     soundManager.setVolume(@activeSong.sID, @volume) if @activeSong
 
 document.observe "dom:loaded", ->
-  for item in $$(".streamer")
-    new Streamer item
+  new Streamer item for item in $$ ".streamer"
 
