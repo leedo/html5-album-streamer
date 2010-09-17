@@ -99,7 +99,7 @@ class Streamer
     else
       soundManager.play @activeSong.sID
       @element.down(".play").addClassName "pause"
-      @progressTimer = setInterval (=> @updateProgress), 500
+      @progressTimer = setInterval (=> @updateProgress()), 500
 
   pause: ->
     soundManager.pause @activeSong.sID if @activeSong
@@ -120,7 +120,7 @@ class Streamer
   updateProgress: ->
     width = 0
     if @activeSong
-      width = (@activeSong.position / @activeSong.duration) / @progressWidth()
+      width = (@activeSong.position / @activeSong.duration) * @progressWidth()
 
     @element.down(".progress").setStyle width: width+"px"
 

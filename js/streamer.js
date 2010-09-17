@@ -118,7 +118,7 @@ Streamer.prototype.play = function() {
     soundManager.play(this.activeSong.sID);
     this.element.down(".play").addClassName("pause");
     return (this.progressTimer = setInterval(__bind(function() {
-      return this.updateProgress;
+      return this.updateProgress();
     }, this), 500));
   }
 };
@@ -144,7 +144,7 @@ Streamer.prototype.updateProgress = function() {
   var width;
   width = 0;
   if (this.activeSong) {
-    width = (this.activeSong.position / this.activeSong.duration) / this.progressWidth();
+    width = (this.activeSong.position / this.activeSong.duration) * this.progressWidth();
   }
   return this.element.down(".progress").setStyle({
     width: width + "px"
