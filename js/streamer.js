@@ -8,13 +8,16 @@ var Streamer = Class.create({
     this.activeSong;
     this.progressTimer;
 
+    this.buildPlayer();
+    this.displayMessage("Downloading playlist&hellip;");
+
     // check if the url is just a link to a single
     // audio file and not a playlist
 
     if (Streamer.isAudioURL(this.playlist_url)) {
       var filename = Streamer.extractFilename(this.playlist_url);
       this.songs = [{url: this.playlist_url, title: filename}];
-      this.buildPlayer();
+      this.refreshPlayer();
     } else {
       this.downloadPlaylist();
     }
@@ -214,11 +217,11 @@ var Streamer = Class.create({
       parameters: {url: this.playlist_url},
       onSuccess: function (response) {
         this.parsePlaylist(response.responseText);
-        this.buildPlayer();
+        this.refreshSongs();
+        this.displayMessage("Not playing");
       }.bind(this),
       onFailure: function (response) {
-        this.buildPlayer();
-        this.displayError("Could not get the playlist");
+        this.displayMessage("Could not get the playlist");
       }.bind(this)
     })
   },
@@ -246,9 +249,21 @@ var Streamer = Class.create({
 
   buildPlayer: function () {
     this.element.innerHTML = "";
-    this.element.insert({top: '<div class="controls"><span class="previous"></span><span class="play"></span><span class="next"></span><div class="title">Not playing</div><span class="volume_toggle"><div class="volume"><div class="volume_bg"><div class="slider"></div></div></div></span></div><div class="bar"><div class="progress"><div class="slider"></div></div></div>'});
+    this.element.insert({top: '<div class="controls"><button class="previous"></button><button class="play"></button><button class="next"></button><div class="title">Not playing</div><button class="volume_toggle"><div class="volume"><div class="volume_bg"><div class="slider"></div></div></div></div><div class="bar"><div class="progress"><div class="slider"></div></div></div>'});
+    
+    this.refreshSongs();
+    soundManager.onerror = function() {
+      this.displayMessage("The &lt;audio&gt; element is not supported by your browser");
+    }.bind(this);
+  },
+
+  refreshSongs: function () {
+    this.element.select("img").invoke("remove");
+    this.element.select("ol").invoke("remove");
+
     if (this.image)
       this.element.insert("<img src=\""+this.image+"\" />");
+
     this.element.insert("<ol></ol>");
     var list = this.element.down("ol");
 
@@ -269,13 +284,10 @@ var Streamer = Class.create({
       list.hide();
     }
 
-    soundManager.onerror = function() {
-      this.displayError("The &lt;audio&gt; element is not supported by your browser");
-    }.bind(this);
   },
 
-  displayError: function (err) {
-    this.element.down(".title").innerHTML = "<span class=\"error\">"+err+" :-(</span>";
+  displayMessage: function (err) {
+    this.element.down(".title").innerHTML = "<span class=\"error\">"+err+"</span>";
   },
 
   toggleVolume: function () {
