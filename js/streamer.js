@@ -23,10 +23,9 @@ var Streamer = Class.create({
 
     this.clickHandlers = [
       [ ".play", function(e){this.togglePlay(e)} ],
-      [ ".stop", this.stop ],
       [ ".next", this.next ],
       [ ".previous", this.previous ],
-      [ ".volume", this.updateVolume ]
+      [ ".volume_toggle", this.toggleVolume ],
     ];
 
     this.element.observe("click", function (event) {
@@ -53,6 +52,64 @@ var Streamer = Class.create({
         this.changeSong(li);
       }
     }.bind(this));
+
+    // volume slider setup
+    this.element.observe("mousedown", function(e) {
+      var volume = e.findElement(".volume");
+      if (volume) {
+        var progress = volume.down(".volume_bg");
+        var offset = volume.cumulativeOffset().top;
+        var slider_offset = progress.down(".slider").getWidth() / 2;
+        var height = volume.getHeight();
+
+        var update = function(e) {
+          var position = height - (e.pointerY() - offset - slider_offset);
+          position = Math.max(0, position);
+          position = Math.min(height, position);
+          progress.setStyle({height: position+"px"});
+        };
+
+        update(e);
+        document.observe("mousemove", update);
+        document.observe("mouseup", function (e) {
+          this.updateVolume(progress.getHeight() / height);
+          document.stopObserving("mousemove");
+          document.stopObserving("mouseup");
+        }.bind(this));
+      }
+    }.bind(this));
+
+    // progress slider setup
+
+    this.element.observe("mousedown", function(e) {
+      var bar = e.findElement(".bar");
+      if (bar) {
+        if (!this.activeSong) return;
+
+        var progress = bar.down(".progress");
+        var offset = progress.cumulativeOffset().left;
+        var paused = this.activeSong.paused;
+        var slider_offset = progress.down(".slider").getWidth() / 2;
+        if (!paused) this.pause();
+
+        var update = function (e) {
+          var position = e.pointerX() - offset - slider_offset;
+          position = Math.max(0, position);
+          position = Math.min(this.progressWidth(), position);
+          progress.setStyle({width: position+"px"});
+        }.bind(this);
+
+        update(e);
+
+        document.observe("mousemove", update);
+        document.observe("mouseup", function (e) {
+          this.updatePosition(progress.getWidth() / this.progressWidth());
+          if (!paused) this.play();
+          document.stopObserving("mousemove");
+          document.stopObserving("mouseup");
+        }.bind(this));
+      }
+    }.bind(this));
   },
 
   changeSong: function (elem) {
@@ -64,6 +121,7 @@ var Streamer = Class.create({
       soundManager.destroySound(this.activeSong.sID);
 
     if (soundManager.canPlayLink(a)) {
+      this.element.select("li.active").invoke("removeClassName","active");
       elem.addClassName("active");
       this.activeSong = soundManager.createSound({
         id: a.href,
@@ -87,7 +145,7 @@ var Streamer = Class.create({
   },
 
   next: function () {
-    var active = this.element.down(".active");
+    var active = this.element.down("li.active");
     if (!active)
       this.play();
     else if (active.next())
@@ -97,7 +155,7 @@ var Streamer = Class.create({
   },
 
   previous: function () {
-    var active = this.element.down(".active");
+    var active = this.element.down("li.active");
     if (active && active.previous())
       this.changeSong(active.previous());
   },
@@ -108,7 +166,7 @@ var Streamer = Class.create({
     }
     else {
       soundManager.play(this.activeSong.sID);
-      this.element.down(".play").addClassName("pause");
+      this.element.down(".play").addClassName("active");
       this.progressTimer = setInterval(this.updateProgress.bind(this), 500);
     }
   },
@@ -117,14 +175,14 @@ var Streamer = Class.create({
     if (this.activeSong)
       soundManager.pause(this.activeSong.sID);
 
-    this.element.down(".play").removeClassName("pause");
+    this.element.down(".play").removeClassName("active");
     clearInterval(this.progressTimer);
   },
 
   stop: function () {
     if (this.activeSong) {
       this.element.down(".active").removeClassName("active");
-      this.element.down(".title").innerHTML = "";
+      this.element.down(".title").innerHTML = "Not playing";
       this.pause();
       soundManager.destroySound(this.activeSong.sID);
       this.activeSong = undefined;
@@ -141,6 +199,13 @@ var Streamer = Class.create({
               * this.progressWidth();
     }
     this.element.down(".progress").setStyle({width: width+"px"});
+  },
+
+  updatePosition: function (percentage) {
+    if (this.activeSong) {
+      var duration = this.activeSong.duration;
+      this.activeSong.setPosition(duration * percentage);
+    }
   },
 
   downloadPlaylist: function () {
@@ -169,19 +234,19 @@ var Streamer = Class.create({
     for (var i=0; i < urls.length; i++) {
       var url = urls[i].match(/<location>(.*?)<\/location>/);
       var title = titles[i].match(/<title>(.*?)<\/title>/);
-      this.songs.push({url: url[1], title: (i+1)+". "+title[1]});
+      this.songs.push({url: url[1], title: title[1]});
     }
   },
 
   progressWidth: function () {
     if (!this._progressWidth)
-      this._progressWidth = this.element.down(".bar").getWidth() - this.element.down(".controls").getWidth();
+      this._progressWidth = this.element.down(".bar").getWidth();
     return this._progressWidth;
   },
 
   buildPlayer: function () {
     this.element.innerHTML = "";
-    this.element.insert({top: '<div class="bar"><div class="progress"></div><div class="controls"><span class="previous"></span><span class="stop"></span><span class="play"></span><span class="next"></span></div><div class="title"></div><div class="volume"><div class="volume_bg"></div></div></div>'});
+    this.element.insert({top: '<div class="controls"><span class="previous"></span><span class="play"></span><span class="next"></span><div class="title">Not playing</div><span class="volume_toggle"><div class="volume"><div class="volume_bg"><div class="slider"></div></div></div></span></div><div class="bar"><div class="progress"><div class="slider"></div></div></div>'});
     if (this.image)
       this.element.insert("<img src=\""+this.image+"\" />");
     this.element.insert("<ol></ol>");
@@ -213,12 +278,17 @@ var Streamer = Class.create({
     this.element.down(".title").innerHTML = "<span class=\"error\">"+err+" :-(</span>";
   },
 
-  updateVolume: function (elem, event) {
-    var x = event.clientX;
-    var offset = elem.cumulativeOffset().left;
-    var vol = x - offset;
-    elem.down(".volume_bg").setStyle({width: vol+"px"});
-    this.volume = (vol / 17) * 100;
+  toggleVolume: function () {
+    var vol = this.element.down(".volume_toggle");
+    if (vol.hasClassName("active")) {
+      vol.removeClassName("active");
+    } else {
+      vol.addClassName("active");
+    }
+  },
+
+  updateVolume: function (percent) {
+    this.volume = percent * 100;
     if (this.activeSong)
       soundManager.setVolume(this.activeSong.sID, this.volume);
   }
