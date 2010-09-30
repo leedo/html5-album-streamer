@@ -251,7 +251,7 @@ var Streamer = Class.create({
 
   buildPlayer: function () {
     this.element.innerHTML = "";
-    this.element.insert({top: '<div class="controls"><button class="previous"></button><button class="play"></button><button class="next"></button><div class="title">Not playing</div><button class="volume_toggle"><div class="volume"><div class="volume_bg"><div class="slider"></div></div></div><button class="playlist" title="toggle playlist"></button></div><div class="bar"><div class="progress"><div class="slider"></div></div></div>'});
+    this.element.insert({top: '<div class="controls"><button class="previous"></button><button class="play"></button><button class="next"></button><div class="title">Not playing</div><button class="volume_toggle"><div class="volume"><div class="volume_bg"><div class="slider"></div></div></div></button><button class="playlist" title="toggle playlist"></button></div><div class="bar"><div class="progress"><div class="slider"></div></div></div>'});
     
     this.refreshSongs();
     soundManager.onerror = function() {
