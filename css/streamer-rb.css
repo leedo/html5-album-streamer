@@ -103,7 +103,8 @@
   box-shadow: 1px 1px 1px #fff;
 }
 
-.streamer .controls span {
+.streamer .controls button {
+  background: none;
   width: 24px;
   height: 24px;
   margin: 0 2px;
@@ -116,14 +117,15 @@
   background-position: center center;
 }
 
-.streamer .controls span:hover {
+.streamer .controls button:hover {
   background-color: #fff;
   -webkit-box-shadow: 0 0 3px #000;
   -moz-box-shadow: 0 0 3px #000;
   box-shadow: 0 0 3px #000;
 }
 
-.streamer .controls span.active:hover {
+.streamer .controls button:active,
+.streamer .controls button.active:hover {
   background-color: #dad8d6;
   border: 1px solid #878481;
   -webkit-box-shadow: none;
@@ -131,30 +133,30 @@
   box-shadow: none;
 }
 
-.streamer .controls span.active {
+.streamer .controls button.active {
   background-color: #dad8d6;
   border: 1px solid #878481;
 }
 
-.streamer span.stop {
-  background-image: url("/img/player_stop.png");
+.streamer button.stop {
+  background-image: url("../img/player_stop.png");
 }
-.streamer span.play {
-  background-image: url("/img/player_play.png");
+.streamer button.play {
+  background-image: url("../img/player_play.png");
 }
-.streamer span.play.pause {
-  background-image: url("/img/player_pause.png");
+.streamer button.play.pause {
+  background-image: url("../img/player_pause.png");
 }
-.streamer span.next {
-  background-image: url("/img/player_fwd.png");
+.streamer button.next {
+  background-image: url("../img/player_fwd.png");
 }
-.streamer span.previous {
-  background-image: url("/img/player_rew.png");
+.streamer button.previous {
+  background-image: url("../img/player_rew.png");
 }
 
-.streamer span.volume_toggle {
+.streamer button.volume_toggle {
   float: right;
-  background: url("/img/player_vol.png") center center no-repeat;
+  background: url("../img/player_vol.png") center center no-repeat;
   position: relative;
 }
 
