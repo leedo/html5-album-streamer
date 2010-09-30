@@ -61,6 +61,8 @@
   background: #dad8d6;
   border: 1px solid #878481;
   -webkit-box-shadow: 1px 1px 1px #fff;
+  -moz-box-shadow: 1px 1px 1px #fff;
+  box-shadow: 1px 1px 1px #fff;
 }
 
 .streamer .progress {
@@ -85,6 +87,8 @@
   padding: 3px 0;
   border: 1px solid #a4a09d;
   -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
 }
 
 .streamer img {
@@ -95,6 +99,8 @@
   float: left;
   border: 1px solid #878481;
   -webkit-box-shadow: 1px 1px 1px #fff;
+  -moz-box-shadow: 1px 1px 1px #fff;
+  box-shadow: 1px 1px 1px #fff;
 }
 
 .streamer .controls span {
@@ -105,18 +111,24 @@
   border: 1px solid transparent;
   float: left;
   -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
   background-position: center center;
 }
 
 .streamer .controls span:hover {
   background-color: #fff;
   -webkit-box-shadow: 0 0 3px #000;
+  -moz-box-shadow: 0 0 3px #000;
+  box-shadow: 0 0 3px #000;
 }
 
 .streamer .controls span.active:hover {
   background-color: #dad8d6;
   border: 1px solid #878481;
   -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
 }
 
 .streamer .controls span.active {
@@ -156,6 +168,8 @@
   z-index: 20;
   border: 1px solid #878481;
   -webkit-box-shadow: 1px 1px 1px #fff;
+  -moz-box-shadow: 1px 1px 1px #fff;
+  box-shadow: 1px 1px 1px #fff;
   background: #dad8d6;
   display: none;
 }
@@ -184,4 +198,6 @@
   padding: 0 3px;
   border: 1px solid #a4a09d;
   -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
 }
