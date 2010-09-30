@@ -3,6 +3,7 @@ var Streamer = Class.create({
   initialize: function (element) {
     this.playlist_url = element.getAttribute("rel");
     this.element = element;
+    this.element.addClassName("collapsed");
     this.volume = 100;
     this.songs = [];
     this.activeSong;
@@ -29,6 +30,7 @@ var Streamer = Class.create({
       [ ".next", this.next ],
       [ ".previous", this.previous ],
       [ ".volume_toggle", this.toggleVolume ],
+      [ ".playlist", this.togglePlaylist ]
     ];
 
     this.element.observe("click", function (event) {
@@ -249,7 +251,7 @@ var Streamer = Class.create({
 
   buildPlayer: function () {
     this.element.innerHTML = "";
-    this.element.insert({top: '<div class="controls"><button class="previous"></button><button class="play"></button><button class="next"></button><div class="title">Not playing</div><button class="volume_toggle"><div class="volume"><div class="volume_bg"><div class="slider"></div></div></div></div><div class="bar"><div class="progress"><div class="slider"></div></div></div>'});
+    this.element.insert({top: '<div class="controls"><button class="previous"></button><button class="play"></button><button class="next"></button><div class="title">Not playing</div><button class="volume_toggle"><div class="volume"><div class="volume_bg"><div class="slider"></div></div></div><button class="playlist" title="toggle playlist"></button></div><div class="bar"><div class="progress"><div class="slider"></div></div></div>'});
     
     this.refreshSongs();
     soundManager.onerror = function() {
@@ -288,6 +290,14 @@ var Streamer = Class.create({
 
   displayMessage: function (err) {
     this.element.down(".title").innerHTML = "<span class=\"error\">"+err+"</span>";
+  },
+
+  togglePlaylist: function() {
+    if (this.element.hasClassName("collapsed")) {
+      this.element.removeClassName("collapsed");
+    } else {
+      this.element.addClassName("collapsed");
+    }
   },
 
   toggleVolume: function () {

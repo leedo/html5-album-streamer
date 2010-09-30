@@ -8,6 +8,11 @@
   overflow: hidden;
 }
 
+.streamer.collapsed ol,
+.streamer.collapsed img {
+  display: none;
+}
+
 .streamer ol {
   margin: 0;
   padding: 0;
@@ -115,6 +120,7 @@
   -moz-border-radius: 2px;
   border-radius: 2px;
   background-position: center center;
+  background-repeat: no-repeat;
 }
 
 .streamer .controls button:hover {
@@ -144,14 +150,15 @@
 .streamer button.play {
   background-image: url("../img/player_play.png");
 }
-.streamer button.play.pause {
-  background-image: url("../img/player_pause.png");
-}
 .streamer button.next {
   background-image: url("../img/player_fwd.png");
 }
 .streamer button.previous {
   background-image: url("../img/player_rew.png");
+}
+.streamer button.playlist {
+  float: right;
+  background-image: url("../img/player_playlist.png");
 }
 
 .streamer button.volume_toggle {
