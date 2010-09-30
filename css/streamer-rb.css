@@ -73,7 +73,7 @@
 
 .streamer .progress {
   position: absolute;
-  height: 100%;
+  height: 4px;
   border: 1px solid #597ca7;
   background: #6e98cb;
   width: 0px;
@@ -116,6 +116,7 @@
   margin: 0 2px;
   display: block;
   border: 1px solid transparent;
+  outline: none;
   float: left;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
