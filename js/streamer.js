@@ -295,8 +295,10 @@ var Streamer = Class.create({
   togglePlaylist: function() {
     if (this.element.hasClassName("collapsed")) {
       this.element.removeClassName("collapsed");
+      this.element.down(".playlist").addClassName("active");
     } else {
       this.element.addClassName("collapsed");
+      this.element.down(".playlist").removeClassName("active");
     }
   },
 
