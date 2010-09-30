@@ -186,7 +186,7 @@ var Streamer = Class.create({
 
   stop: function () {
     if (this.activeSong) {
-      this.element.down(".active").removeClassName("active");
+      this.element.down("li.active").removeClassName("active");
       this.element.down(".title").innerHTML = "Not playing";
       this.pause();
       soundManager.destroySound(this.activeSong.sID);
