@@ -50,6 +50,10 @@
   margin-left: 22px;
   font-weight: bold;
   font-size: 12px;
+  max-width: 340px;
+  overflow-x: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .streamer .controls {
@@ -178,6 +182,7 @@
   float: right;
   background: url("../img/player_vol.png") center center no-repeat;
   position: relative;
+  margin-right: 0px;
 }
 
 .streamer .volume_container {
