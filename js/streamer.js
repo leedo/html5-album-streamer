@@ -173,7 +173,6 @@ var Streamer = Class.create({
   updateLoadProgress: function () {
     var width = 0;
     if (this.activeSong) {
-      if (this.activeSong.bytesTotal <= 0) return;
       width = (this.activeSong.bytesLoaded / this.activeSong.bytesTotal)
               * this.progressWidth();
     }
@@ -236,8 +235,11 @@ var Streamer = Class.create({
   },
 
   progressWidth: function () {
-    if (!this._progressWidth)
-      this._progressWidth = this.element.down(".bar").getWidth();
+    if (!this._progressWidth) {
+      var width = this.element.down(".bar").getStyle("width");
+      width = width.replace("px", "");
+      this._progressWidth = width;
+    }
     return this._progressWidth;
   },
 
