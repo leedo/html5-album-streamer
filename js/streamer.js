@@ -57,43 +57,36 @@ var Streamer = Class.create({
       }
     }.bind(this));
 
-    // only toggle volume if button is clicked, not child slider
+    // volume slider setup
+    this.updateVolumeHandler = this.updateVolume.bind(this);
+    this.hideVolumeHandler = this.hideVolume.bind(this);
 
     this.element.down(".volume_toggle").observe("click", function (e) {
       if (e.element().hasClassName("volume_toggle")) this.toggleVolume();
     }.bind(this));
 
     // progress slider setup
+    this.updatePositionHandler = this.updatePosition.bind(this);
+    this.finishSeekHandler = this.finishSeek.bind(this);
 
     this.element.observe("mousedown", function(e) {
       var bar = e.findElement(".bar");
       if (bar) {
-        if (!this.activeSong) return;
+        this.wasPaused = this.activeSong.paused;
+        if (!this.wasPaused) this.pause();
+        
+        this.updatePosition(e);
 
-        var progress = bar.down(".progress");
-        var offset = progress.cumulativeOffset().left;
-        var paused = this.activeSong.paused;
-        var slider_offset = progress.down(".slider").getWidth() / 2;
-        if (!paused) this.pause();
-
-        var update = function (e) {
-          var position = e.pointerX() - offset - slider_offset;
-          position = Math.max(0, position);
-          position = Math.min(this.progressWidth(), position);
-          progress.setStyle({width: position+"px"});
-        }.bind(this);
-
-        update(e);
-
-        document.observe("mousemove", update);
-        document.observe("mouseup", function (e) {
-          this.updatePosition(progress.getWidth() / this.progressWidth());
-          if (!paused) this.play();
-          document.stopObserving("mousemove");
-          document.stopObserving("mouseup");
-        }.bind(this));
+        document.observe("mousemove", this.updatePositionHandler);
+        document.observe("mouseup", this.finishSeekHandler);
       }
     }.bind(this));
+  },
+
+  finishSeek: function (e) {
+    if (!this.wasPaused) this.play();
+    document.stopObserving("mousemove", this.updatePositionHandler);
+    document.stopObserving("mouseup", this.finishSeekHandler);
   },
 
   changeSong: function (elem) {
@@ -185,11 +178,21 @@ var Streamer = Class.create({
     this.element.down(".progress").setStyle({width: width+"px"});
   },
 
-  updatePosition: function (percentage) {
-    if (this.activeSong) {
-      var duration = this.activeSong.duration;
-      this.activeSong.setPosition(duration * percentage);
-    }
+  updatePosition: function (e) {
+    if (!this.activeSong) return;
+
+    var bar = this.element.down(".bar");
+    var progress = bar.down(".progress");
+    var offset = progress.cumulativeOffset().left;
+    var slider_offset = progress.down(".slider").getWidth() / 2;
+
+    var position = e.pointerX() - offset - slider_offset;
+    position = Math.max(0, position);
+    position = Math.min(this.progressWidth(), position);
+    progress.setStyle({width: position+"px"});
+
+    var duration = this.activeSong.duration;
+    this.activeSong.setPosition(duration * (position / this.progressWidth()));
   },
 
   downloadPlaylist: function () {
@@ -290,18 +293,20 @@ var Streamer = Class.create({
 
       vol.down(".volume").observe("mousedown", function (e) {
         this.updateVolume(e);
-        document.observe("mousemove", this.updateVolume.bind(this));
+        document.observe("mousemove", this.updateVolumeHandler);
       }.bind(this));
 
-      document.observe("mouseup", function (e) {
-        if (e.findElement(".volume")) this.updateVolume(e);
-
-        vol.down(".volume").stopObserving("mousedown");
-        document.stopObserving("mousemove");
-        document.stopObserving("mouseup");
-        this.toggleVolume();
-      }.bind(this));
+      document.observe("mouseup", this.hideVolumeHandler);
     }
+  },
+
+  hideVolume: function (e) {
+    if (e.findElement(".volume")) this.updateVolume(e);
+
+    this.element.down(".volume").stopObserving("mousedown");
+    document.stopObserving("mousemove", this.updateVolumeHandler);
+    document.stopObserving("mouseup", this.hideVolumeHandler);
+    this.toggleVolume();
   },
 
   updateVolume: function (e) {
