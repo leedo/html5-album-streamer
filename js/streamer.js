@@ -7,7 +7,6 @@ var Streamer = Class.create({
     this.volume = 100;
     this.songs = [];
     this.activeSong;
-    this.progressTimer;
 
     this.buildPlayer();
     this.displayMessage("Downloading playlist&hellip;");
@@ -154,7 +153,6 @@ var Streamer = Class.create({
       soundManager.pause(this.activeSong.sID);
 
     this.element.down(".play").removeClassName("active");
-    clearInterval(this.progressTimer);
   },
 
   stop: function () {
@@ -166,8 +164,6 @@ var Streamer = Class.create({
       this.activeSong = undefined;
       this.updateProgress();
     }
-
-    clearInterval(this.progressTimer);
   },
 
   updateLoadProgress: function () {
