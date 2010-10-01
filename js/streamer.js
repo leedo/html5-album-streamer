@@ -184,9 +184,8 @@ var Streamer = Class.create({
     var bar = this.element.down(".bar");
     var progress = bar.down(".progress");
     var offset = progress.cumulativeOffset().left;
-    var slider_offset = progress.down(".slider").getWidth() / 2;
 
-    var position = e.pointerX() - offset - slider_offset;
+    var position = e.pointerX() - offset;
     position = Math.max(0, position);
     position = Math.min(this.progressWidth(), position);
     progress.setStyle({width: position+"px"});
@@ -313,10 +312,9 @@ var Streamer = Class.create({
     var volume = this.element.down(".volume");
     var progress = volume.down(".volume_bg");
     var offset = volume.cumulativeOffset().top;
-    var slider_offset = progress.down(".slider").getWidth() / 2;
     var height = volume.getHeight();
 
-    var position = height - (e.pointerY() - offset - slider_offset);
+    var position = height - (e.pointerY() - offset);
     position = Math.max(0, position);
     position = Math.min(height, position);
 

@@ -29,7 +29,6 @@
 
 .streamer ol a {
   padding: 3px;
-  cursor: default;
   color: #000;
   text-decoration: none;
   display: block;
@@ -82,7 +81,6 @@
 }
 
 .streamer .progress .slider {
-  cursor: default;
   position: absolute;
   right: -9px;
   top: -4px;
@@ -230,4 +228,8 @@
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
+}
+
+.slider {
+  cursor: pointer;
 }
