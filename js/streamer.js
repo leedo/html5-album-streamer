@@ -29,7 +29,6 @@ var Streamer = Class.create({
       [ ".play", function(e){this.togglePlay(e)} ],
       [ ".next", this.next ],
       [ ".previous", this.previous ],
-      [ ".volume_toggle", this.toggleVolume ],
       [ ".playlist", this.togglePlaylist ]
     ];
 
@@ -58,30 +57,10 @@ var Streamer = Class.create({
       }
     }.bind(this));
 
-    // volume slider setup
-    this.element.observe("mousedown", function(e) {
-      var volume = e.findElement(".volume");
-      if (volume) {
-        var progress = volume.down(".volume_bg");
-        var offset = volume.cumulativeOffset().top;
-        var slider_offset = progress.down(".slider").getWidth() / 2;
-        var height = volume.getHeight();
+    // only toggle volume if button is clicked, not child slider
 
-        var update = function(e) {
-          var position = height - (e.pointerY() - offset - slider_offset);
-          position = Math.max(0, position);
-          position = Math.min(height, position);
-          progress.setStyle({height: position+"px"});
-        };
-
-        update(e);
-        document.observe("mousemove", update);
-        document.observe("mouseup", function (e) {
-          this.updateVolume(progress.getHeight() / height);
-          document.stopObserving("mousemove");
-          document.stopObserving("mouseup");
-        }.bind(this));
-      }
+    this.element.down(".volume_toggle").observe("click", function (e) {
+      if (e.element().hasClassName("volume_toggle")) this.toggleVolume();
     }.bind(this));
 
     // progress slider setup
@@ -251,7 +230,7 @@ var Streamer = Class.create({
 
   buildPlayer: function () {
     this.element.innerHTML = "";
-    this.element.insert({top: '<div class="controls"><button class="previous"></button><button class="play"></button><button class="next"></button><div class="title">Not playing</div><button class="volume_toggle"><div class="volume"><div class="volume_bg"><div class="slider"></div></div></div></button><button class="playlist" title="toggle playlist"></button></div><div class="bar"><div class="progress"><div class="slider"></div></div></div>'});
+    this.element.insert({top: '<div class="controls"><div class="button previous"></div><div class="button play"></div><div class="button next"></div><div class="title">Not playing</div><div class="button volume_toggle"><div class="volume_container"><div class="volume"><div class="volume_bg"><div class="slider"></div></div></div></div></div><div class="button playlist" title="toggle playlist"></div></div><div class="bar"><div class="progress"><div class="slider"></div></div></div>'});
     
     this.refreshSongs();
     soundManager.onerror = function() {
@@ -308,11 +287,38 @@ var Streamer = Class.create({
       vol.removeClassName("active");
     } else {
       vol.addClassName("active");
+
+      vol.down(".volume").observe("mousedown", function (e) {
+        this.updateVolume(e);
+        document.observe("mousemove", this.updateVolume.bind(this));
+      }.bind(this));
+
+      document.observe("mouseup", function (e) {
+        if (e.findElement(".volume")) this.updateVolume(e);
+
+        vol.down(".volume").stopObserving("mousedown");
+        document.stopObserving("mousemove");
+        document.stopObserving("mouseup");
+        this.toggleVolume();
+      }.bind(this));
     }
   },
 
-  updateVolume: function (percent) {
-    this.volume = percent * 100;
+  updateVolume: function (e) {
+    var volume = this.element.down(".volume");
+    var progress = volume.down(".volume_bg");
+    var offset = volume.cumulativeOffset().top;
+    var slider_offset = progress.down(".slider").getWidth() / 2;
+    var height = volume.getHeight();
+
+    var position = height - (e.pointerY() - offset - slider_offset);
+    position = Math.max(0, position);
+    position = Math.min(height, position);
+
+    progress.setStyle({height: position+"px"});
+
+    this.volume = (progress.getHeight() / height) * 100;
+
     if (this.activeSong)
       soundManager.setVolume(this.activeSong.sID, this.volume);
   }
