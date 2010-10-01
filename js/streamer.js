@@ -103,7 +103,9 @@ var Streamer = Class.create({
       this.activeSong = soundManager.createSound({
         id: a.href,
         url: a.href,
-        onfinish: this.next.bind(this)
+        onfinish: this.next.bind(this),
+        whileloading: this.updateLoadProgress.bind(this),
+        whileplaying: this.updateProgress.bind(this)
       });
       soundManager.setVolume(this.activeSong.sID, this.volume);
       this.element.down(".title").innerHTML = a.innerHTML;
@@ -144,7 +146,6 @@ var Streamer = Class.create({
     else {
       soundManager.play(this.activeSong.sID);
       this.element.down(".play").addClassName("active");
-      this.progressTimer = setInterval(this.updateProgress.bind(this), 500);
     }
   },
 
@@ -167,6 +168,16 @@ var Streamer = Class.create({
     }
 
     clearInterval(this.progressTimer);
+  },
+
+  updateLoadProgress: function () {
+    var width = 0;
+    if (this.activeSong) {
+      if (this.activeSong.bytesTotal <= 0) return;
+      width = (this.activeSong.bytesLoaded / this.activeSong.bytesTotal)
+              * this.progressWidth();
+    }
+    this.element.down(".load_progress").setStyle({width: width+"px"});
   },
 
   updateProgress: function () {
@@ -232,7 +243,7 @@ var Streamer = Class.create({
 
   buildPlayer: function () {
     this.element.innerHTML = "";
-    this.element.insert({top: '<div class="controls"><div class="button previous"></div><div class="button play"></div><div class="button next"></div><div class="title">Not playing</div><div class="button volume_toggle"><div class="volume_container"><div class="volume"><div class="volume_bg"><div class="slider"></div></div></div></div></div><div class="button playlist" title="toggle playlist"></div></div><div class="bar"><div class="progress"><div class="slider"></div></div></div>'});
+    this.element.insert({top: '<div class="controls"><div class="button previous"></div><div class="button play"></div><div class="button next"></div><div class="title">Not playing</div><div class="button volume_toggle"><div class="volume_container"><div class="volume"><div class="volume_bg"><div class="slider"></div></div></div></div></div><div class="button playlist" title="toggle playlist"></div></div><div class="bar"><div class="load_progress"></div><div class="progress"><div class="slider"></div></div></div>'});
     
     this.refreshSongs();
     soundManager.onerror = function() {
