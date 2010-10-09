@@ -276,3 +276,17 @@
   border: 1px solid #597ca7;
   background: #fff;
 }
+
+.slider .grip {
+  background: url(../img/player_grip.png) center center no-repeat;
+  opacity: 0.2;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+}
+
+.volume .slider .grip {
+  background: url(../img/player_grip_vert.png) center center no-repeat;
+}
