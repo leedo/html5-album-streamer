@@ -126,7 +126,7 @@
 }
 
 .streamer .controls div.button {
-  background: none;
+  background-image: url("../img/sprite.png");
   display: block;
   width: 24px;
   height: 24px;
@@ -138,7 +138,6 @@
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
-  background-position: center center;
   background-repeat: no-repeat;
 }
 
@@ -170,28 +169,25 @@
   box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1);
 }
 
-.streamer div.button.stop {
-  background-image: url("../img/player_stop.png");
-}
 .streamer div.button.play {
-  background-image: url("../img/player_play.png");
+  background-position: 0px -144px;
 }
 .streamer div.button.next {
-  background-image: url("../img/player_fwd.png");
+  background-position: 0px -72px;
 }
 .streamer div.button.previous {
-  background-image: url("../img/player_rew.png");
+  background-position: 0px -48px;
 }
 .streamer div.button.playlist {
   float: right;
-  background-image: url("../img/player_playlist.png");
+  background-position: 0px -120px;
 }
 
 .streamer div.button.volume_toggle {
   float: right;
-  background: url("../img/player_vol.png") center center no-repeat;
   position: relative;
   margin-right: 0px;
+  background-position: 0px -168px;
 }
 
 .streamer .volume_container {
@@ -278,7 +274,9 @@
 }
 
 .slider .grip {
-  background: url(../img/player_grip.png) center center no-repeat;
+  background-image: url(../img/sprite.png);
+  background-repeat: no-repeat;
+  background-position: -2px -31px;
   opacity: 0.2;
   position: absolute;
   top: 0px;
@@ -288,5 +286,5 @@
 }
 
 .volume .slider .grip {
-  background: url(../img/player_grip_vert.png) center center no-repeat;
+  background-position: -7px -3px;
 }
