@@ -181,6 +181,7 @@
 .streamer div.button.playlist {
   float: right;
   background-position: 0px -120px;
+  width: 25px;
 }
 
 .streamer div.button.volume_toggle {
