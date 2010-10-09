@@ -170,13 +170,13 @@
 }
 
 .streamer div.button.play {
-  background-position: 0px -144px;
+  background-position: 1px -144px;
 }
 .streamer div.button.next {
   background-position: 0px -72px;
 }
 .streamer div.button.previous {
-  background-position: 0px -48px;
+  background-position: -1px -48px;
 }
 .streamer div.button.playlist {
   float: right;
