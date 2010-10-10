@@ -115,7 +115,7 @@ var Streamer = Class.create({
       this.play();
     }
     else {
-      this.displayError("Your browser can not play this audio file");
+      this.displayMessage("Your browser can not play this audio file");
     }
   },
 
@@ -133,7 +133,7 @@ var Streamer = Class.create({
   },
 
   togglePlay: function (elem) {
-    if (!this.activeSong || (this.activeSong && this.activeSong.paused))
+    if (!this.activeSong || this.activeSong.paused)
       this.play();
     else
       this.pause();
@@ -184,7 +184,7 @@ var Streamer = Class.create({
   },
 
   duration: function () {
-    if (!this.activeSong) return;
+    if (!this.activeSong) return 1;
     return this.activeSong.loaded ? this.activeSong.duration
             : this.activeSong.durationEstimate;
   },
@@ -268,10 +268,8 @@ var Streamer = Class.create({
   },
 
   buildPlayer: function () {
-    this.element.innerHTML = "";
-    this.element.insert({top: '<div class="controls"><div class="button previous"></div><div class="button play"></div><div class="button next"></div><div class="title">Not playing</div><div class="button volume_toggle"><div class="volume_container"><div class="volume"><div class="volume_bg"><div class="slider"><div class="grip"></div></div></div></div></div></div><div class="button playlist" title="toggle playlist"></div></div><div class="bar"><div class="load_progress"></div><div class="progress"><div class="slider"><div class="grip"></div></div></div></div>'});
+    this.element.update('<div class="controls"><div class="button previous"></div><div class="button play"></div><div class="button next"></div><div class="title">Not playing</div><div class="button volume_toggle"><div class="volume_container"><div class="volume"><div class="volume_bg"><div class="slider"><div class="grip"></div></div></div></div></div></div><div class="button playlist" title="toggle playlist"></div></div><div class="bar"><div class="load_progress"></div><div class="progress"><div class="slider"><div class="grip"></div></div></div></div>');
     
-    this.refreshSongs();
     soundManager.onerror = function() {
       this.displayMessage("The &lt;audio&gt; element is not supported by your browser");
     }.bind(this);
