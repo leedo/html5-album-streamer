@@ -110,7 +110,7 @@ var Streamer = Class.create({
       this.element.select("li.active").invoke("removeClassName","active");
       elem.addClassName("active");
       this.activeSong = this.createSound(a);
-      soundManager.setVolume(this.activeSong.sID, this.volume);
+      this.activeSong.setVolume(this.volume);
       this.element.down(".title").innerHTML = a.innerHTML;
       this.play();
     }
@@ -160,14 +160,14 @@ var Streamer = Class.create({
       this.changeSong(this.element.down(".streamersong"));
     }
     else {
-      soundManager.play(this.activeSong.sID);
+      this.activeSong.play();
       this.element.down(".play").addClassName("active");
     }
   },
 
   pause: function () {
     if (this.activeSong)
-      soundManager.pause(this.activeSong.sID);
+      this.activeSong.pause();
 
     this.element.down(".play").removeClassName("active");
   },
@@ -176,8 +176,7 @@ var Streamer = Class.create({
     if (this.activeSong) {
       this.element.down("li.active").removeClassName("active");
       this.element.down(".title").innerHTML = "Not playing";
-      this.pause();
-      this.activeSong.setPosition(0);
+      this.activeSong.stop();
       this.activeSong = undefined;
     }
     this.resetProgress();
@@ -358,7 +357,7 @@ var Streamer = Class.create({
     this.volume = (progress.getHeight() / height) * 100;
 
     if (this.activeSong)
-      soundManager.setVolume(this.activeSong.sID, this.volume);
+      this.activeSong.setVolume(this.volume);
   }
 });
 
