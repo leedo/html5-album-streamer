@@ -14,7 +14,7 @@ var Streamer = Class.create({
     this.playlist_url = element.getAttribute("rel");
     this.element = element;
     this.element.addClassName("collapsed");
-    this.volume = 100;
+    this.volume = readCookie("streamer-volume") || 100;
     this.songs = [];
     this.activeSong;
 
@@ -269,6 +269,7 @@ var Streamer = Class.create({
   buildPlayer: function () {
     this.element.update('<div class="controls"><div class="button previous"></div><div class="button play"></div><div class="button next"></div><div class="title">Not playing</div><div class="button volume_toggle"><div class="volume_container"><div class="volume"><div class="volume_bg"><div class="slider"><div class="grip"></div></div></div></div></div></div><div class="button playlist" title="toggle playlist"></div></div><div class="bar"><div class="load_progress"></div><div class="progress"><div class="slider"><div class="grip"></div></div></div></div>');
     
+    this.updateVolumeSlider();
     soundManager.onerror = function() {
       this.displayMessage("The &lt;audio&gt; element is not supported by your browser");
     }.bind(this);
@@ -342,6 +343,16 @@ var Streamer = Class.create({
     this.toggleVolume();
   },
 
+  updateVolumeSlider: function () {
+    var volume = this.element.down(".volume");
+    var progress = volume.down(".volume_bg");
+    var height = 74; // hack because getHeight() returns 0 at load
+
+    var position = height * (this.volume / 100);
+    console.log(height, position);
+    progress.setStyle({height: position+"px"});
+  },
+
   updateVolume: function (e) {
     var volume = this.element.down(".volume");
     var progress = volume.down(".volume_bg");
@@ -355,6 +366,8 @@ var Streamer = Class.create({
     progress.setStyle({height: position+"px"});
 
     this.volume = (progress.getHeight() / height) * 100;
+    eraseCookie("streamer-volume");
+    createCookie("streamer-volume", this.volume, 365);
 
     if (this.activeSong)
       this.activeSong.setVolume(this.volume);
@@ -386,6 +399,34 @@ Object.extend(Streamer, {
     })
   }
 });
+
+/*
+cookie functions from http://www.quirksmode.org/js/cookies.html
+*/
+function createCookie(name,value,days) {
+	if (days) {
+		var date = new Date();
+		date.setTime(date.getTime()+(days*24*60*60*1000));
+		var expires = "; expires="+date.toGMTString();
+	}
+	else var expires = "";
+	document.cookie = name+"="+value+expires+"; path=/";
+}
+
+function readCookie(name) {
+	var nameEQ = name + "=";
+	var ca = document.cookie.split(';');
+	for(var i=0;i < ca.length;i++) {
+		var c = ca[i];
+		while (c.charAt(0)==' ') c = c.substring(1,c.length);
+		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+	}
+	return null;
+}
+
+function eraseCookie(name) {
+	createCookie(name,"",-1);
+}
 
 /*
 Copyright (c) Copyright (c) 2007, Carl S. Yestrau All rights reserved.
