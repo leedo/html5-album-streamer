@@ -14,7 +14,13 @@ var Streamer = Class.create({
     this.playlist_url = element.getAttribute("rel");
     this.element = element;
     this.element.addClassName("collapsed");
-    this.volume = readCookie("streamer-volume") || 100;
+    this.volume = readCookie("streamer-volume");
+    if (this.volume != null) {
+      this.volume = parseInt(this.volume);
+    }
+    else {
+      this.volume = 100;
+    }
     this.songs = [];
     this.activeSong;
 
@@ -110,9 +116,9 @@ var Streamer = Class.create({
       this.element.select("li.active").invoke("removeClassName","active");
       elem.addClassName("active");
       this.activeSong = this.createSound(a);
-      this.activeSong.setVolume(this.volume);
       this.element.down(".title").innerHTML = a.innerHTML;
       this.play();
+      this.activeSong.setVolume(this.volume);
     }
     else {
       this.displayMessage("Your browser can not play this audio file");
@@ -126,6 +132,7 @@ var Streamer = Class.create({
     return soundManager.createSound({
       id: a.href,
       url: a.href,
+      volume: this.volume,
       onfinish: this.next.bind(this),
       whileloading: this.updateLoadProgress.bind(this),
       whileplaying: this.updateProgress.bind(this)
@@ -340,6 +347,8 @@ var Streamer = Class.create({
     this.element.down(".volume").stopObserving("mousedown");
     document.stopObserving("mousemove", this.updateVolumeHandler);
     document.stopObserving("mouseup", this.hideVolumeHandler);
+    eraseCookie("streamer-volume");
+    createCookie("streamer-volume", this.volume, 365);
     this.toggleVolume();
   },
 
@@ -349,7 +358,6 @@ var Streamer = Class.create({
     var height = 74; // hack because getHeight() returns 0 at load
 
     var position = height * (this.volume / 100);
-    console.log(height, position);
     progress.setStyle({height: position+"px"});
   },
 
@@ -365,7 +373,7 @@ var Streamer = Class.create({
 
     progress.setStyle({height: position+"px"});
 
-    this.volume = (progress.getHeight() / height) * 100;
+    this.volume = (position / height) * 100;
     eraseCookie("streamer-volume");
     createCookie("streamer-volume", this.volume, 365);
 
